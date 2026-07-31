@@ -26,7 +26,7 @@ public partial class DbTasksContext : DbContext
     {
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DADF3D8216C");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DADCC2F491C");
 
             entity.ToTable("Funcionario");
 
@@ -40,7 +40,7 @@ public partial class DbTasksContext : DbContext
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD80DD959A");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD89C1CEB3");
 
             entity.ToTable("Tarefa");
 
@@ -59,7 +59,7 @@ public partial class DbTasksContext : DbContext
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Funcionario).WithMany(p => p.Tarefas)
-                .HasForeignKey(d => d.CodigoFuncionario)
+                .HasForeignKey(d => d.FuncionarioId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Tarefa_Funcionario");
         });
