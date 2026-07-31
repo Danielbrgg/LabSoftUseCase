@@ -176,3 +176,146 @@ Com a nova Model `Incidente.cs` criada na pasta `Models`:
 4. Clique em **Adicionar**.
 
 🎉 **Teste o funcionamento completo do novo CRUD executando o projeto e navegando até `/Incidente`!**
+
+
+---
+
+## 🛠️ Revisão Dev A: Banco de Dados & SQL
+
+Para trabalhar com a abordagem **Database First**, é essencial dominar os comandos de manipulação e as estruturas de dados no SQL Server. Abaixo estão os conceitos e comandos fundamentais utilizados neste laboratório:
+
+| Conceito / Sintaxe | Tipo | O que faz / Explicação | Exemplo de Uso |
+| :--- | :--- | :--- | :--- |
+| **`INT`** | Tipo de Dado | Armazena números inteiros (positivos ou negativos) sem casas decimais. | `Codigo INT` |
+| **`VARCHAR(N)`** | Tipo de Dado | Armazena texto/caracteres de tamanho variável até o limite $N$ especificado. | `Nome VARCHAR(100)` |
+| **`PRIMARY KEY`** | Restrição | Identificador único da tabela. Garante que não existam registros duplicados e que o valor nunca seja nulo. | `Codigo INT PRIMARY KEY` |
+| **`FOREIGN KEY`** | Restrição | Cria um relacionamento entre duas tabelas, garantindo a integridade referencial com a chave primária de outra tabela. | `FOREIGN KEY (CodigoFuncionario) REFERENCES Funcionario(Codigo)` |
+| **`SELECT`** | Comando DML | Consulta e recupera dados de uma ou mais tabelas do banco de dados. | `SELECT * FROM Funcionario;` |
+| **`INSERT`** | Comando DML | Insere novos registros/linhas em uma tabela. | `INSERT INTO Funcionario (Nome, Cargo) VALUES ('Ana', 'QA');` |
+
+---
+
+## 🏗️ Revisão Dev B: Arquitetura ASP.NET Core & Entity Framework
+
+Para que a conexão e o gerenciamento de dados funcionem corretamente em uma aplicação ASP.NET Core MVC com Entity Framework Core, é necessário compreender os seguintes componentes e conceitos centrais:
+
+| Componente / Conceito | Descrição e Papel na Aplicação |
+| :--- | :--- |
+| **`appsettings.json`** | Arquivo de configuração global da aplicação. É nele que armazenamos a **ConnectionString** (string de conexão), contendo o servidor, nome do banco, usuário e senha para conectar ao SQL Server. |
+| **`DbContext`** | Classe do Entity Framework que representa uma sessão com o banco de dados. Ela mapeia as tabelas em coleções `DbSet<T>` e traduz operações C# em comandos SQL equivalentes no banco. |
+| **CRUD** | Acrônimo para as 4 operações básicas de armazenamento persistente: <br>• **C**reate (Criar/Inserir - `HTTP POST`) <br>• **R**ead (Ler/Consultar - `HTTP GET`) <br>• **U**pdate (Atualizar/Editar - `HTTP POST/PUT`) <br>• **D**elete (Deletar/Excluir - `HTTP POST/DELETE`) |
+
+---
+
+## 💻 Revisão Dev C: Conceitos de Orientação a Objetos (C#)
+
+As classes geradas pelo Entity Framework baseiam-se nos pilares da Orientação a Objetos. Veja como esses conceitos se aplicam ao código C# do nosso projeto:
+
+| Conceito | Explicação | Exemplo do Código (`Tarefa.cs` / `DbContext`) |
+| :--- | :--- | :--- |
+| **Classe** | Estrutura/molde que define as características e comportamentos de um objeto no sistema. | `public class Tarefa { ... }` |
+| **Atributos (Propriedades)** | Características ou dados que a classe armazena (no EF, representam as colunas da tabela). | `public string Descricao { get; set; }` |
+| **Método** | Bloco de código dentro de uma classe que executa uma ação ou comportamento específico. | `public async Task<IActionResult> Index() { ... }` |
+| **Parâmetros** | Valores/informações de entrada passados para um método executar sua lógica. | `public IActionResult Details(int? id)` *(onde `id` é o parâmetro)* |
+| **Return** | Instrução que encerra a execução de um método e devolve um resultado para quem o chamou. | `return View(tarefa);` |
+
+---
+
+## 💼 Você na Entrevista de Emprego
+
+Testes práticos e simulações de entrevistas técnicas frequentemente abordam a integração entre SQL, C# e ASP.NET Core. Responda às 10 questões abaixo para avaliar o seu domínio sobre o conteúdo:
+
+---
+
+### 🗄️ Questões de Banco de Dados & SQL
+
+#### ❓ Questão 1: Tipos de Dados e Restrições
+**Cenário:** Durante a modelagem do banco de dados `dbTasks`, você precisa definir uma coluna para armazenar o código identificador principal da tabela `Incidente`. Esse código deve ser gerado automaticamente pelo SQL Server a cada novo registro e não pode se repetir.
+
+Qual combinação de tipos e restrições SQL deve ser utilizada?
+
+- [ ] A) `Codigo VARCHAR(50) NOT NULL`
+- [ ] B) `Codigo INT IDENTITY(1,1) PRIMARY KEY`
+- [ ] C) `Codigo INT FOREIGN KEY`
+- [ ] D) `Codigo TEXT UNIQUE`
+- [ ] E) `Codigo INT NULL`
+
+---
+
+#### ❓ Questão 2: Relacionamento entre Tabelas
+**Cenário:** A tabela `Tarefa` possui a coluna `CodigoFuncionario`, que faz referência à coluna `Codigo` da tabela `Funcionario`. Essa configuração garante que uma tarefa não seja vinculada a um funcionário inexistente.
+
+Como chamamos essa regra de integridade no banco de dados relational?
+
+- [ ] A) Primary Key (Chave Primária)
+- [ ] B) Identity Constraint
+- [ ] C) Foreign Key (Chave Estrangeira)
+- [ ] D) Index Clustered
+- [ ] E) Database First Constraint
+
+---
+
+#### ❓ Questão 3: Manipulação de Dados (DML)
+**Cenário:** O sistema precisa registrar um novo incidente no banco de dados via script manual. A tabela `Incidente` possui as colunas `DescricaoProblema`, `DataIncidente` e `Resolvido`.
+
+Qual instrução SQL realiza a inserção desse novo registro corretamente?
+
+- [ ] A) `SELECT INTO Incidente VALUES ('Lentidão no sistema', GETDATE(), 'nao');`
+- [ ] B) `UPDATE Incidente SET DescricaoProblema = 'Lentidão no sistema';`
+- [ ] C) `CREATE TABLE Incidente ('Lentidão no sistema', GETDATE(), 'nao');`
+- [ ] D) `INSERT INTO Incidente (DescricaoProblema, DataIncidente, Resolvido) VALUES ('Lentidão no sistema', GETDATE(), 'nao');`
+- [ ] E) `ADD REGISTRO TO Incidente VALUES ('Lentidão no sistema', GETDATE(), 'nao');`
+
+---
+
+### ⚙️ Questões de ASP.NET Core, EF Core & Orientação a Objetos
+
+#### ❓ Questão 4: String de Conexão
+**Cenário:** Ao publicar a aplicação ASP.NET Core em um novo ambiente de homologação, o sistema apresentou erro informando que não conseguiu conectar ao SQL Server. O desenvolvedor precisa ajustar a URL do servidor e as credenciais de acesso.
+
+Em qual arquivo padrão do projeto ASP.NET Core a `ConnectionString` fica armazenada?
+
+- [ ] A) `DbContext.cs`
+- [ ] B) `Program.cs`
+- [ ] C) `appsettings.json`
+- [ ] D) `_Layout.cshtml`
+- [ ] E) `FuncionarioController.cs`
+
+---
+
+#### ❓ Questão 5: O papel do DbContext
+**Cenário:** Em uma entrevista de emprego, o entrevistador pergunta: *"Qual é a principal função da classe `DbTasksContext` que herdou de `DbContext` no nosso projeto?"*
+
+Qual das respostas abaixo descreve corretamente o papel dessa classe?
+
+- [ ] A) Renderizar as páginas HTML e gerenciar o CSS da aplicação.
+- [ ] B) Atuar como a ponte entre o código C# e o banco de dados SQL Server, gerenciando a conexão e os conjuntos de dados (`DbSet`).
+- [ ] C) Executar scripts de criação de tabelas automaticamente toda vez que a aplicação é iniciada.
+- [ ] D) Armazenar as credenciais de login dos usuários de forma criptografada.
+- [ ] E) Criar as rotas de navegação no menu principal da aplicação.
+
+---
+
+#### ❓ Questão 6: Conceito de CRUD
+**Cenário:** Um analista de sistemas pediu para você criar o "CRUD de Incidentes". 
+
+O que a sigla **CRUD** representa no ciclo de desenvolvimento de software?
+
+- [ ] A) Class, Resource, User, Data
+- [ ] B) Connect, Run, Undo, Disconnect
+- [ ] C) Compile, Read, Update, Deploy
+- [ ] D) Create, Read, Update, Delete
+- [ ] E) Code, Refactor, Use, Debug
+
+---
+
+#### ❓ Questão 7: Abstração de Classes em C#
+**Cenário:** No arquivo `Funcionario.cs`, temos o seguinte trecho de código:
+
+```csharp
+public class Funcionario
+{
+    public int Codigo { get; set; }
+    public string Nome { get; set; } = null!;
+    public string Cargo { get; set; } = null!;
+}
