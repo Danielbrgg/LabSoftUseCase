@@ -308,14 +308,89 @@ O que a sigla **CRUD** representa no ciclo de desenvolvimento de software?
 - [ ] E) Code, Refactor, Use, Debug
 
 ---
+### 💻 Questões de Orientação a Objetos & Scaffold (C# e EF Core)
 
-#### ❓ Questão 7: Abstração de Classes em C#
-**Cenário:** No arquivo `Funcionario.cs`, temos o seguinte trecho de código:
+#### ❓ Questão 7: Abordagem Database First
+**Cenário:** Durante a execução do laboratório, a tabela Incidente foi criada diretamente no SQL Server via script SQL. Em seguida, foi executado o comando de scaffold no terminal para atualizar o projeto em C#.
 
-```csharp
-public class Funcionario
-{
-    public int Codigo { get; set; }
-    public string Nome { get; set; } = null!;
-    public string Cargo { get; set; } = null!;
-}
+O que a abordagem Database First faz nesse processo?
+
+- [ ] A) Apaga o banco de dados SQL Server e o recria a partir das classes C#.
+- [ ] B) Lê a estrutura existente do banco de dados e gera automaticamente as classes de modelo (Models) e o DbContext no projeto.
+- [ ] C) Converte o projeto ASP.NET Core em uma aplicação desktop executável.
+- [ ] D) Impede qualquer alteração futura nas tabelas do banco de dados.
+- [ ] E) Gera relatórios em PDF com base nos dados armazenados nas tabelas.
+
+---
+
+#### ❓ Questão 8: Propriedades e Atributos de Classe
+**Cenário:** Na classe de modelo Tarefa, temos a declaração da propriedade Descricao com os acessores get e set.
+
+Dentro dos conceitos da Programação Orientada a Objetos (POO) aplicados ao Entity Framework Core, o que essa estrutura representa?
+
+- [ ] A) Um método responsável por salvar a descrição da tarefa diretamente no banco de dados.
+- [ ] B) Uma propriedade (atributo) da classe Tarefa com métodos get e set acessores, que mapeia uma coluna de texto da tabela.
+- [ ] C) Uma variável local que só existe enquanto o formulário HTML estiver aberto.
+- [ ] D) Um parâmetro obrigatoriamente passado para o construtor da classe DbContext.
+- [ ] E) Um comando SQL executado para alterar o tipo de dado da coluna.
+
+---
+
+#### ❓ Questão 9: Assinatura e Parâmetros de Métodos na Controller
+**Cenário:** Ao analisar o código gerado pelo Scaffold na FuncionarioController, você encontra o método Details que recebe como entrada um parâmetro de ID inteiro opcional e retorna a View com os dados do funcionário.
+
+Sobre os conceitos de Métodos, Parâmetros e Return, qual afirmação está correta?
+
+- [ ] A) Details é a classe, o ID é o retorno do método e a View é o parâmetro de entrada.
+- [ ] B) Details é o método, o ID é um parâmetro opcional (que aceita nulo) e a instrução return View devolve o resultado para ser renderizado na tela.
+- [ ] C) A instrução return View apaga a instância do funcionário da memória do servidor.
+- [ ] D) O tipo de retorno Task indica que o método não pode receber nenhum parâmetro de entrada.
+- [ ] E) O parâmetro do ID indica que o método só aceita números inteiros negativos.
+
+---
+
+#### ❓ Questão 10: Roteamento e Ações do Controlador MVC
+**Cenário:** Um usuário acessa o navegador e clica no link de navegação que aponta para a rota /Funcionario/Index.
+
+O que acontece na arquitetura ASP.NET Core MVC para que a lista de funcionários apareça na tela?
+
+- [ ] A) O navegador executa uma instrução SQL diretamente no banco de dados sem passar pelo servidor C#.
+- [ ] B) O arquivo appsettings.json intercepta a requisição e renderiza o HTML diretamente para o usuário.
+- [ ] C) A requisição atinge a FuncionarioController, que executa o método de ação Index, consulta o DbContext e passa os dados para a exibição (View).
+- [ ] D) O Entity Framework ignora a requisição pois a ação Index é reservada apenas para o administrador do sistema.
+- [ ] E) O arquivo _Layout.cshtml compila o código C# e gera um novo banco de dados temporário.
+
+---
+
+## 🔑 Gabarito Completo das 10 Questões de Entrevista
+
+<details>
+<summary><strong>Clique para expandir o Gabarito e Explicações</strong></summary>
+
+### 🗄️ Banco de Dados & SQL
+
+* **Questão 1: Resposta Correta: B**
+  * **Explicação:** O tipo INT com a propriedade IDENTITY(1,1) garante o autoincremento automático a cada novo registro. A restrição PRIMARY KEY garante a unicidade da chave primária.
+* **Questão 2: Resposta Correta: C**
+  * **Explicação:** A FOREIGN KEY (Chave Estrangeira) é a restrição que estabelece o relacionamento entre tabelas e garante a integridade referencial.
+* **Questão 3: Resposta Correta: D**
+  * **Explicação:** O comando DML INSERT INTO NomeTabela (colunas) VALUES (valores) é a sintaxe padrão para inserção de dados no SQL Server.
+
+### ⚙️ ASP.NET Core, EF Core & Orientação a Objetos
+
+* **Questão 4: Resposta Correta: C**
+  * **Explicação:** O arquivo appsettings.json é o local correto e padronizado para armazenar configurações de ambiente e strings de conexão no ASP.NET Core.
+* **Questão 5: Resposta Correta: B**
+  * **Explicação:** A classe derivada de DbContext gerencia a conexão, mapeia as tabelas (DbSet) e faz a ponte ORM entre os objetos C# e o banco de dados.
+* **Questão 6: Resposta Correta: D**
+  * **Explicação:** CRUD significa Create (Criar), Read (Ler), Update (Atualizar) e Delete (Excluir).
+* **Questão 7: Resposta Correta: B**
+  * **Explicação:** Na abordagem Database First, o banco de dados é a fonte da verdade: a estrutura das tabelas é convertida automaticamente em classes C# e mapeamentos no EF Core via engenharia reversa (scaffold).
+* **Questão 8: Resposta Correta: B**
+  * **Explicação:** Trata-se de uma propriedade C# autoimplementada com métodos get (leitura) e set (escrita), mapeada pelo Entity Framework para a coluna equivalente na tabela.
+* **Questão 9: Resposta Correta: B**
+  * **Explicação:** Details é o identificador do método; o ID indica que o método recebe um parâmetro de tipo inteiro anulável (nullable); e a instrução return View devolve o resultado para a camada de apresentação.
+* **Questão 10: Resposta Correta: C**
+  * **Explicação:** No padrão MVC (Model-View-Controller), o Controller recebe a requisição HTTP, interage com o Model/DbContext para buscar os dados e os repassa para a View correspondente ser renderizada.
+
+</details>
