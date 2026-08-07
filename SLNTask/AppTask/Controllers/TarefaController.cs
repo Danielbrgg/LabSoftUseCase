@@ -24,6 +24,11 @@ namespace AppTask.Controllers
             var dbTasksContext = _context.Tarefas.Include(t => t.Funcionario);
             return View(await dbTasksContext.ToListAsync());
         }
+        public async Task<IActionResult> Sobre()
+        {
+
+            return View();
+        }
 
         // GET: Tarefa/Details/5
         public async Task<IActionResult> Details(int? id)
