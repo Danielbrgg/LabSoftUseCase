@@ -37,7 +37,6 @@ O banco de dados do sistema é o `dbTasks`. Ele possui duas tabelas relacionadas
 ```sql
 CREATE DATABASE dbTasks;
 GO
-
 USE dbTasks;
 GO
 
@@ -59,19 +58,19 @@ CREATE TABLE Tarefa (
     DataCancelada DATETIME NULL,
     StatusTarefa VARCHAR(30) NOT NULL,
     Prazo VARCHAR(20) NOT NULL,
-    CodigoFuncionario INT NOT NULL,
-    CONSTRAINT FK_Tarefa_Funcionario FOREIGN KEY (CodigoFuncionario) 
+    FuncionarioId INT NOT NULL,
+    CONSTRAINT FK_Tarefa_Funcionario FOREIGN KEY (FuncionarioId) 
         REFERENCES Funcionario(Codigo)
 );
 GO
 
--- Dados Iniciais para Teste
+-- Inserindo Dados Iniciais para Teste
 INSERT INTO Funcionario (Nome, Cargo) VALUES 
 ('Carlos Silva', 'Desenvolvedor Senior'),
 ('Ana Oliveira', 'Analista de QA'),
 ('Roberto Santos', 'Gerente de Projetos');
 
-INSERT INTO Tarefa (Descricao, DataPlanejada, DataIniciada, DataFinalizada, DataCancelada, StatusTarefa, Prazo, CodigoFuncionario) VALUES 
+INSERT INTO Tarefa (Descricao, DataPlanejada, DataIniciada, DataFinalizada, DataCancelada, StatusTarefa, Prazo, FuncionarioId) VALUES 
 ('Criar tela de Login', '2026-08-10', '2026-08-01', NULL, NULL, 'Em Andamento', 'Em dia', 1),
 ('Homologar Release 1.0', '2026-08-05', NULL, NULL, NULL, 'Pendente', 'Em atraso', 2);
 GO
