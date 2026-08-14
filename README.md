@@ -179,6 +179,41 @@ Com a nova Model `Incidente.cs` criada na pasta `Models`:
 
 🎉 **Teste o funcionamento completo do novo CRUD executando o projeto e navegando até `/Incidente`!**
 
+## ⚡ Passo 5: Criando CRUD para Departamento e Central de Custo
+
+Agora você irá expandir o banco de dados e atualizar o mapeamento no projeto.
+
+### 5.1. Executar o Script SQL no Banco
+
+GitFlow
+
+Se ainda não criou, crie a branch Develop a partir da branch atual.  Ela é sua branch que vocÊ irá criar para consolidar
+as novas mudanças antes de o sistema ser enviado para produção.
+
+Você deve criar a CRUD completo para cada fluxo (Departamento e CentralDeCusto).
+
+Para cada fluxo crie um branch diferente partindo da develop e depois aça
+
+Execute o script abaixo no SQL Server para criar a nova tabela `Incidente`:
+
+```sql
+USE dbTasks;
+GO
+
+CREATE TABLE Departamento (
+    Codigo INT IDENTITY(1,1) PRIMARY KEY,
+    Descricao VARCHAR(250) NOT NULL,
+    Ativo bit NULL
+);
+GO
+CREATE TABLE CentralDeCusto (
+    Codigo INT IDENTITY(1,1) PRIMARY KEY,
+    NomeCentral VARCHAR(250) NOT NULL,
+    ValorMetaAnual decimal default(0)
+);
+
+```
+
 
 ---
 
