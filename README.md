@@ -203,7 +203,7 @@ Substituia o código que está no botão delete para ficar assim.
 
 Vamos adicionar  o modal para ficar similar a imagem a seguir:
 
-![Fluxo Modal](./imagens/fluxocommodal.jpg)
+![Fluxo Modal](./imagens/modalexcluir.jpg)
 
 
 Adicione esse código na index de tarefa 
