@@ -184,7 +184,7 @@ Substitua novamente o conteúdo do arquivo Views/Tarefa/Index.cshtml pelo códig
 Para melhorar a experiência do usuário, vamos substituir o redirecionamento para a página de Delete por uma caixa de diálogo elegante (Modal) utilizando os componentes nativos do Bootstrap.
 
 Atualmente para excluir uma tarefa você clica em delete e ele envia para outra página.
-![Fluxo de exclusão atual](./imagens/fluxoexclusaoatual.png)
+![Fluxo de exclusão atual](./imagens/fluxoexclusaoatual.jpg)
 
 
 Nosso objetivo é ao clicar em delete, ele abrir um modal e ao confirmar excluir o elemento
@@ -201,7 +201,13 @@ Substituia o código que está no botão delete para ficar assim.
 
 ```
 
-Fora da div table, logo abaixo cole o código
+Vamos adicionar  o modal para ficar similar a imagem a seguir:
+
+![Fluxo Modal](./imagens/fluxocommodal.jpg)
+
+
+Adicione esse código na index de tarefa 
+
 ```html
 <!-- Modal de Confirmação de Exclusão -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -227,3 +233,5 @@ Fora da div table, logo abaixo cole o código
 </div>
 
 ```
+
+Rode sua aplicação. Ao tentar rodar agora ele exibe O MODAL, mas se confirmar não vai funcionar. Para que funcione iremos para o proximo passo, que é JavaScript
