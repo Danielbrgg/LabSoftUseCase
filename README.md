@@ -570,6 +570,7 @@ HTML
 E agora o JS com Jquery
 
 ```html
+<script>
 $(document).ready(function () {
     // Busca os dados da controller (Endpoint JSON)
     $.ajax({
@@ -614,7 +615,7 @@ $(document).ready(function () {
         }
     });
 });
-
+</script>
 
 ````
 
