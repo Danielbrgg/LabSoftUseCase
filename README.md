@@ -619,16 +619,13 @@ $(document).ready(function () {
 
 ```
 
-Como ficar a controller
+Como ficaria a controller
 
-```html
-
+```csharp
 [HttpGet]
 public async Task<IActionResult> ObterTodas()
 {
     var tarefas = await _context.Tarefas.Include(t => t.Funcionario).ToListAsync();
     return Json(tarefas);
 }
-
-
 ```
