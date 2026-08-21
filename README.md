@@ -533,7 +533,7 @@ Revisão CSS
 
 
 
-## PInformação Extra - JS e JQuery
+## Informação Extra - JS e JQuery
 
 Você pode deixar seu código front end 100% sem uso de razor você pode usar o JS com Jquery. É comum encontra essa estrutura em aplicações que já estão em produção há um tempo.
 
