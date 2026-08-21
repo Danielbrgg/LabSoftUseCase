@@ -501,6 +501,7 @@ Abra o arquivo `Views/Tarefa/Create.cshtml`, substitua todo o seu conteúdo pelo
         </form>
     </div>
 </div>
+```
 
 Principais Mudanças Aplicadas no HTML Puro
 - Envio de Formulário: Substituição de asp-action="Create" por action="/Tarefa/Create" method="post" acompanhado do @Html.AntiForgeryToken().
