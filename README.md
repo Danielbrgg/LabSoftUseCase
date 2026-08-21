@@ -190,7 +190,7 @@ Atualmente para excluir uma tarefa você clica em delete e ele envia para outra 
 Nosso objetivo é ao clicar em delete, ele abrir um modal e ao confirmar excluir o elemento
 ![Fluxo Proposto](./imagens/fluxocommodal.jpg)
 
-#### 4.1 Adicionando caix de DIALOGO
+#### 4.1 Botão excluir - invocar modal
 
 Substituia o código que está no botão delete para ficar assim.
 
@@ -201,9 +201,12 @@ Substituia o código que está no botão delete para ficar assim.
 
 ```
 
+
+#### 4.2 - Adicionando caixa de DIALOGO - MODAL
 Vamos adicionar  o modal para ficar similar a imagem a seguir:
 
 ![Fluxo Modal](./imagens/modalexcluir.jpg)
+
 
 
 Adicione esse código na index de tarefa 
@@ -235,3 +238,23 @@ Adicione esse código na index de tarefa
 ```
 
 Rode sua aplicação. Ao tentar rodar agora ele exibe O MODAL, mas se confirmar não vai funcionar. Para que funcione iremos para o proximo passo, que é JavaScript
+
+
+### 4.3 Conhecendo as classes Bootstrap
+
+| Classe / Atributo HTML | Função / O que ele faz |
+| :--- | :--- |
+| `class="modal fade"` | Transforma a <div> em uma janela flutuante e aplica a animação suave de transição (fade-in/fade-out). |
+| `tabindex="-1"` | Desativa a navegação normal por Tab na página e prende o foco dentro da janela do Modal. |
+| `aria-labelledby="deleteModalLabel"` | Recursos de acessibilidade (Screen Readers): conecta o container do Modal ao seu título principal. |
+| `aria-hidden="true"` | Mantém a janela oculta para leitores de tela enquanto o Modal não for ativado. |
+| `class="modal-dialog"` | Controla as dimensões, margens e centralização da caixa de diálogo na tela. |
+| `class="modal-content"` | Renderiza o contêiner interno com fundo branco, cantos arredondados e sombra projetada. |
+| `class="modal-header bg-danger text-white"` | Define o topo do Modal estilizado em vermelho (bg-danger) com texto em branco. |
+| `class="modal-body"` | Espaço reservado para a mensagem principal de confirmação apresentada ao usuário.|
+| `class="modal-footer"` | Área reservada para o agrupamento de ações e botões no rodapé da janela.|
+| `data-bs-dismiss="modal"` | Atributo JavaScript nativo do Bootstrap que fecha o Modal imediatamente ao ser clicado. |
+| `data-bs-toggle="modal"` | Define a intenção do botão de disparar a abertura de um elemento do tipo Modal. |
+ `data-bs-target="#deleteModal"` | Aponta exatamente qual Modal (pelo id) deve ser aberto ao clicar no botão.. |
+
+
