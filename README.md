@@ -565,7 +565,7 @@ HTML
     </tbody>
 </table>
 
-````
+```
 
 E agora o JS com Jquery
 
@@ -617,11 +617,12 @@ $(document).ready(function () {
 });
 </script>
 
-````
+```
 
 Como ficar a controller
 
-```
+```html
+
 [HttpGet]
 public async Task<IActionResult> ObterTodas()
 {
