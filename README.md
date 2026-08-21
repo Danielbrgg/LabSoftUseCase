@@ -128,9 +128,6 @@ Agora que a estrutura está em HTML puro, vamos aplicar classes de estilo do Boo
 
 Substitua novamente o conteúdo do arquivo Views/Tarefa/Index.cshtml pelo código estilizado abaixo:
 
-### 4.1. Executar o Script SQL no Banco
-
-Execute o script abaixo no SQL Server para criar a nova tabela `Incidente`:
 
 ```html
 @model IEnumerable<AppTask.Models.Tarefa>
@@ -179,5 +176,54 @@ Execute o script abaixo no SQL Server para criar a nova tabela `Incidente`:
         }
     </tbody>
 </table>
+
+```
+
+## 🗑️ Passo 4: Implementando a Confirmação de Exclusão com Modal do Bootstrap
+
+Para melhorar a experiência do usuário, vamos substituir o redirecionamento para a página de Delete por uma caixa de diálogo elegante (Modal) utilizando os componentes nativos do Bootstrap.
+
+Atualmente para excluir uma tarefa você clica em delete e ele envia para outra página.
+![Fluxo de exclusão atual](./imagens/fluxoexclusaoatual.png)
+
+
+Nosso objetivo é ao clicar em delete, ele abrir um modal e ao confirmar excluir o elemento
+![Fluxo Proposto](./imagens/fluxocommodal.png)
+
+#### 4.1 Adicionando caix de DIALOGO
+
+Substituia o código que está no botão delete para ficar assim.
+
+```html
+ <button type="button" class="btn btn-danger btn-sm text-white" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@item.Codigo" data-descricao="@item.Descricao">
+ Delete
+</button>
+
+```
+
+Fora da div table, logo abaixo cole o código
+```html
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Confirmação de Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Deseja realmente excluir a tarefa: <strong id="tarefaDescricao"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn-cancel btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <!-- Formulário que dispara o POST de Delete para a Controller -->
+                <form id="deleteForm" method="post" action="">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 ```
