@@ -179,7 +179,7 @@ Substitua novamente o conteúdo do arquivo Views/Tarefa/Index.cshtml pelo códig
 
 ```
 
-## 🗑️ Passo 4: Implementando a Confirmação de Exclusão com Modal do Bootstrap
+## 🗑️ Passo 4: Implementando a Confirmação de Exclusão com Modal do Bootstrap em TAREFA
 
 Para melhorar a experiência do usuário, vamos substituir o redirecionamento para a página de Delete por uma caixa de diálogo elegante (Modal) utilizando os componentes nativos do Bootstrap.
 
@@ -240,7 +240,166 @@ Adicione esse código na index de tarefa
 Rode sua aplicação. Ao tentar rodar agora ele exibe O MODAL, mas se confirmar não vai funcionar. Para que funcione iremos para o proximo passo, que é JavaScript
 
 
-### 4.3 Conhecendo as classes Bootstrap
+#### 4.3 Script do modal
+
+No final agora do seu arquivo index.cshtml de tarefa adicione o código a seguir  e teste a exclusão.
+
+```html
+@section Scripts {
+    <script>
+        // Script para capturar os dados da linha da tabela e injetar no Modal dinamicamente
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Botão que acionou o modal
+            var id = button.getAttribute('data-id'); // Extrai o ID
+            var descricao = button.getAttribute('data-descricao'); // Extrai a descrição
+
+            // Atualiza o texto da descrição no corpo do modal
+            var modalDescricaoSpan = deleteModal.querySelector('#tarefaDescricao');
+            modalDescricaoSpan.textContent = descricao;
+
+            // Altera o atributo 'action' do formulário interno para apontar para a rota correta de delete
+            var deleteForm = deleteModal.querySelector('#deleteForm');
+            deleteForm.action = '/Tarefa/Delete/' + id;
+        });
+    </script>
+}
+
+
+```
+
+
+#### 4.4 Sem o Bootstrap como seria  (Não precisa colar no seu projeto)
+
+Sem o bootstrap para implementar as funcionaliades/ações no modal seria preciso usar recursos nativos do JS.
+
+Nesse cenario a comunicação vai funcionar assim e você poderá ver no código a seguir.
+
+- Gatilho (abrirModal): Ao clicar no botão Delete de qualquer linha da tabela, o JS extrai o data-id e o data-descricao.
+
+- Injeção da Rota: O JS altera o atributo action do formulário <form id="deleteForm"> definindo o endereço correto da Controller, como /Tarefa/Delete/1.
+
+- Envio (POST): Ao clicar no botão Sim, Excluir, o formulário HTML faz uma requisição POST nativa do navegador para a Controller, enviando junto o token de segurança @Html.AntiForgeryToken().
+
+
+
+ Veja agora o código
+
+
+
+```html
+<!-- Estilo Mínimo Nativo -->
+<style>
+    /* Fundo escuro translúcido (Backdrop) */
+    .modal-fundo {
+        display: none; /* Inicia oculto */
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    /* Caixa do Modal */
+    .modal-caixa {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        min-width: 320px;
+    }
+
+    .modal-acoes {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+</style>
+
+<!-- Exemplo de Tabela com Botão Excluir Nativo -->
+<table>
+    <tr>
+        <td>Criar tela de Login</td>
+        <td>
+            <button type="button" class="btn-delete" data-id="1" data-descricao="Criar tela de Login">
+                Delete
+            </button>
+        </td>
+    </tr>
+</table>
+
+<!-- Estrutura do Modal -->
+<div id="meuModal" class="modal-fundo">
+    <div class="modal-caixa">
+        <h3>Confirmação de Exclusão</h3>
+        <p>Deseja realmente excluir a tarefa: <strong id="tarefaDescricao"></strong>?</p>
+        
+        <div class="modal-acoes">
+            <!-- Botão de Fechar Nativo -->
+            <button type="button" id="btnFechar">Cancelar</button>
+
+            <!-- Formulário HTML que dispara o POST para a Controller -->
+            <form id="deleteForm" method="post" action="">
+                @Html.AntiForgeryToken()
+                <button type="submit">Sim, Excluir</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script Puro (Zero Bibliotecas) -->
+<script>
+    var modal = document.getElementById('meuModal');
+    var btnFechar = document.getElementById('btnFechar');
+    var deleteForm = document.getElementById('deleteForm');
+    var modalDescricaoSpan = document.getElementById('tarefaDescricao');
+
+    // 1. Função manual para ABRIR o modal e injetar os dados da tarefa
+    function abrirModal(id, descricao) {
+        // Atualiza a descrição na tela
+        modalDescricaoSpan.textContent = descricao;
+
+        // Configura a rota de envio da controller dinamicamente (ex: /Tarefa/Delete/1)
+        deleteForm.action = '/Tarefa/Delete/' + id;
+
+        // Exibe o modal
+        modal.style.display = 'block';
+    }
+
+    // 2. Função manual para FECHAR o modal
+    function fecharModal() {
+        modal.style.display = 'none';
+    }
+
+    // 3. Captura o clique em qualquer botão "Delete" da tabela
+    document.querySelectorAll('.btn-delete').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var id = this.getAttribute('data-id');
+            var descricao = this.getAttribute('data-descricao');
+            abrirModal(id, descricao);
+        });
+    });
+
+    // 4. Evento de clique no botão Cancelar
+    btnFechar.addEventListener('click', fecharModal);
+
+    // 5. Fechar ao clicar no fundo escuro translúcido
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            fecharModal();
+        }
+    });
+</script>
+
+
+```
+
+
+### 4.5 Conhecendo as classes Bootstrap (Reforçando)
 
 | Classe / Atributo HTML | Função / O que ele faz |
 | :--- | :--- |
@@ -258,3 +417,115 @@ Rode sua aplicação. Ao tentar rodar agora ele exibe O MODAL, mas se confirmar 
  `data-bs-target="#deleteModal"` | Aponta exatamente qual Modal (pelo id) deve ser aberto ao clicar no botão.. |
 
 
+
+
+## ➕ Passo 5: Refatorando o Create de Tarefa
+
+Neste passo, vamos refatorar a View de criação (`Views/Tarefa/Create.cshtml`). Substituiremos os Tag Helpers do ASP.NET (`asp-action`, `asp-for`, `asp-items`) por **HTML Puro** utilizando atributos nativos (`action`, `method`, `name`, `id`), mantendo a integração correta com a Controller através dos nomes das propriedades e da `@Html.AntiForgeryToken()`.
+
+Abra o arquivo `Views/Tarefa/Create.cshtml`, substitua todo o seu conteúdo pelo código abaixo e salve:
+
+```html
+@model AppTask.Models.Tarefa
+
+@{
+    ViewData["Title"] = "Nova Tarefa";
+}
+
+<h1 class="mb-4">Cadastrar Nova Tarefa</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form action="/Tarefa/Create" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label for="Descricao" class="form-label font-weight-bold">Descrição</label>
+                <input type="text" id="Descricao" name="Descricao" class="form-control" placeholder="Digite a descrição da tarefa" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="DataPlanejada" class="form-label">Data Planejada</label>
+                <input type="datetime-local" id="DataPlanejada" name="DataPlanejada" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="DataIniciada" class="form-label">Data Iniciada</label>
+                <input type="datetime-local" id="DataIniciada" name="DataIniciada" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="DataFinalizada" class="form-label">Data Finalizada</label>
+                <input type="datetime-local" id="DataFinalizada" name="DataFinalizada" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="DataCancelada" class="form-label">Data Cancelada</label>
+                <input type="datetime-local" id="DataCancelada" name="DataCancelada" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="StatusTarefa" class="form-label">Status da Tarefa</label>
+                <select id="StatusTarefa" name="StatusTarefa" class="form-select" required>
+                    <option value="">-- Selecione o Status --</option>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="Prazo" class="form-label">Prazo</label>
+                <input type="text" id="Prazo" name="Prazo" class="form-control" placeholder="Ex: Em dia, Em atraso" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="FuncionarioId" class="form-label">Funcionário Responsável</label>
+                <select id="FuncionarioId" name="FuncionarioId" class="form-select" required>
+                    <option value="">-- Selecione um Funcionário --</option>
+                    @if (ViewBag.ListaFuncionario != null)
+                    {
+                        foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ListaFuncionario)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
+                <a href="/Tarefa/Index" class="btn btn-secondary">Voltar para a Lista</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+Principais Mudanças Aplicadas no HTML Puro
+- Envio de Formulário: Substituição de asp-action="Create" por action="/Tarefa/Create" method="post" acompanhado do @Html.AntiForgeryToken().
+
+- Mapeamento do Model: Troca de asp-for="Propriedade" por atributos nativos id="Propriedade" e name="Propriedade". O ASP.NET Binder utiliza o atributo name para mapear os dados diretamente no objeto da Controller.
+
+- Select do Funcionário: Substituição do asp-items por um loop @foreach manual iterando sobre a coleção (IEnumerable<SelectListItem>)ViewBag.ListaFuncionario.
+
+- Inputs Específicos: Definição do atributo type="datetime-local" nos campos de data para habilitar o seletor nativo de data e hora do navegador.
+
+
+
+## ➕➕ Passo 6: Refatorando Funcionario, Incidente, Departamento e CentralDeCusto
+
+Usando a mesma estratégia praticado nos passos anteriroes. Faça a refatoraçao dos arquivos 'index' e 'create' dos fluxos de Funcionario, Incidente, Departamento e CentralDeCusto.
+
+
+Para cada fluxo sempre crie um branch nova e depois de testar faça o merge com develop.
+
+
+## Resumo (Infográfico)
+
+Códigos Javascript
+![Código JS](./imagens/revisaogeral1.jpg)
+
+
+Revisão CSS
+![Código JS](./imagens/revisaocss.jpg)
