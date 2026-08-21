@@ -619,3 +619,15 @@ $(document).ready(function () {
 
 ````
 
+Como ficar a controller
+
+```
+[HttpGet]
+public async Task<IActionResult> ObterTodas()
+{
+    var tarefas = await _context.Tarefas.Include(t => t.Funcionario).ToListAsync();
+    return Json(tarefas);
+}
+
+
+```
