@@ -188,7 +188,7 @@ Atualmente para excluir uma tarefa você clica em delete e ele envia para outra 
 
 
 Nosso objetivo é ao clicar em delete, ele abrir um modal e ao confirmar excluir o elemento
-![Fluxo Proposto](./imagens/fluxocommodal.png)
+![Fluxo Proposto](./imagens/fluxocommodal.jpg)
 
 #### 4.1 Adicionando caix de DIALOGO
 
