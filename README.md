@@ -1,19 +1,30 @@
-# LabUseCase02 - Refatoração do Front-end (HTML Puro & Bootstrap)
+# 🚀 Guia Prático: Construindo um Projeto ASP.NET Core MVC (.NET 9) a partir do Banco de Dados (Database First sem Linha de Comando)
 
-Seja bem-vindo ao LabUseCase02! Nesta aula prática, focaremos nos fundamentos do desenvolvimento web. Vamos abandonar os Tag Helpers automáticos do ASP.NET Core e trabalhar diretamente com HTML Puro, aplicando também o framework Bootstrap para estilizar a interface de forma profissional.
+## 📌 Contextualização e Objetivo
+No desenvolvimento de software corporativo, é extremamente comum nos depararmos com cenários onde o banco de dados já está modelado e criado no **SQL Server**. Antigamente, no .NET Framework 4.x, utilizávamos o recurso gráfico do *Entity Data Model (.edmx)* para gerar as classes a partir do banco de dados existente.
+
+Com o advento do **.NET Core / .NET 9**, o **Entity Framework Core (EF Core)** evoluiu e abandonou os arquivos `.edmx`. No entanto, **não é necessário digitar diversos comandos no terminal** para automatizar esse fluxo.
+
+Este tutorial guia o aluno, passo a passo, na criação de uma aplicação **ASP.NET Core MVC do zero**, realizando a **Engenharia Reversa (Reverse Engineering)** do banco de dados via interface visual do Visual Studio, configurando as dependências e gerando o **CRUD automático (Scaffolding)** das telas.
+
+
+![Texto Alternativo da Imagem](/imagens/fluxo_asp_net.png)
 
 ---
 
-## 🚀 PREPRAÇÃO: Preparação do Banco de Dados Inicial
+## 🛠️ Pré-requisitos
+- Visual Studio 2022 (com suporte ao .NET 9 instado)
+- Microsoft SQL Server e SQL Server Management Studio (SSMS)
+- Extensão **EF Core Power Tools** instalada no Visual Studio:
+  > *Para instalar:* Vá no menu superior **Extensões > Gerenciar Extensões**, pesquise por `EF Core Power Tools`, instale e reinicie o Visual Studio.
 
-Só faça esse passo caso ainda não tenha o banco de dados dbTasks em seu computador.
+---
 
-1. Abra o **SQL Server Management Studio (SSMS)** ou o **Azure Data Studio**.
-2. Conecte-se à sua instância local do SQL Server.
-3. Execute o script SQL abaixo para criar o banco de dados `dbTasks` e as tabelas iniciais:
+## 🗄️ Etapa 1: Preparação e Criação do Banco de Dados
+Abra o **SQL Server Management Studio (SSMS)**, crie o banco de dados e execute o script SQL abaixo para estruturar o ambiente de testes.
 
 ```sql
-CREATE DATABASE dbTasks;
+CREATE DATABASE dbTasksZero;
 GO
 USE dbTasks;
 GO
@@ -54,578 +65,178 @@ INSERT INTO Tarefa (Descricao, DataPlanejada, DataIniciada, DataFinalizada, Data
 GO
 ```
 
+## 📁 Etapa 2: Criação do Projeto no Visual Studio
+
+- Abre o Visual Studio.
+
+- Clique em Criar um novo projeto.
+
+- Selecione o modelo Web do ASP.NET Core (Model-View-Controller) e clique em Próximo.
+
+- Defina o nome da solução (ex: appReversotask) e clique em Próximo.
+
+- Selecione o Framework .NET 7.0 (Suporte Técnico Padrão) e clique em Criar.
+
+
+## 📦 Etapa 3: Instalação dos Pacotes do Entity Framework
+
+- Microsoft.EntityFrameworkCore.SqlServer
+
+- Microsoft.EntityFrameworkCore.Tools
+
+- Microsoft.VisualStudio.Web.CodeGeneration.Design
+
+## 🔄 Etapa 4: Engenharia Reversa (Reverse Engineering Visual)
+
+1. Clique com o botão direito sobre o seu projeto no Visual Studio.
+2. Navegue até **EF Core Power Tools > Reverse Engineer**.
+3. Clique em **Add** para criar uma nova conexão com o SQL Server:
+   - Digite o nome do seu Servidor (ex: `localhost`, `.\SQLEXPRESS` ou `.\SENAI`).
+   - Selecione o método de autenticação (*Windows Authentication* ou *SQL Server Authentication* com `sa` e senha).
+   - Selecione o banco de dados `dbTasks`.
+   - Clique em **Test Connection** para validar e avance.
+4. Marque as tabelas `Funcionario` e `Tarefa`.
+5. Na tela de configurações:
+   - Verifique o nome do `DbContext` gerado (ex: `dbTasksContext`).
+   - Mantenha as opções padrões marcadas.
+6. Clique em **OK**.
+
+
+## ⚙️ Etapa 5: Configuração da String de Conexão no appsettings.json
+
+Abra o arquivo appsettings.json na raiz do projeto e configure a propriedade ConnectionStrings.
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "ConexaoDefault": "Server=.\\SENAI; Database=dbTasks; User Id=sa; Password=senai.123; TrustServerCertificate=True;"
+  }
+}
+```
+
+Exemplo com Autenticação do Windows (Trusted Connection)
+
+```json
+"ConnectionStrings": {
+  "ConexaoDefault": "Server=localhost; Database=dbTasks; Trusted_Connection=True; TrustServerCertificate=True;"
+}
+```
+
+
+## Etapa 6: Registro do DbContext na Injeção de Dependência (Program.cs)
+
+Para que o gerador de código consiga instanciar o banco sem erros de tempo de execução ou na geração do Scaffolding, registre o contexto no contêiner de dependências do .NET.
+
+Abra o arquivo Program.cs e insira o registro antes do var app = builder.Build();:
+
+```c#
+using Microsoft.EntityFrameworkCore;
+using appReversotask.Models; // Subsitua pelo namespace real das suas Models
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Adicionar os serviços ao contêiner
+builder.Services.AddControllersWithViews();
+
+// Registrando o DbContext com a String de Conexão
+builder.Services.AddDbContext<dbTasksContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexaoDefault")));
+
+var app = builder.Build();
+```
+
+## 🔨 Etapa 7: Compilação Obrigatória da Solução
+Antes de gerar as telas e controllers, o projeto precisa estar limpo e compilado:
+
+- Pressione Ctrl + Shift + B ou clique com o botão direito na Solução e selecione Recompilar (Rebuild).
+
+
+## 🎨 Etapa 8: Gerando o CRUD Automático (Scaffolding MVC)
+
+Agora vamos criar os **Controllers** e **Views Razor** sem digitar nenhuma linha de código manual:
+
+1. No **Gerenciador de Soluções**, clique com o botão direito na pasta `Controllers` > **Adicionar** > **Item do Scaffolding...** (ou *New Scaffolded Item...*).
+2. Selecione a opção **Controlador MVC com exibições, usando o Entity Framework** e clique em **Adicionar**.
+3. Na janela de configuração:
+   - **Classe de modelo:** Selecione `Funcionario (appReversotask.Models)`.
+   - **Classe do contexto de dados:** Selecione `dbTasksContext (appReversotask.Models)`.
+   - **Exibições:** Certifique-se de que a opção de gerar views esteja marcada.
+4. Clique em **Adicionar**.
+5. Repita o mesmo procedimento para a classe de modelo `Tarefa`.
+
+
+## 🎯 Resultado Esperado
+O Visual Studio gerará automaticamente:
+
+- FuncionariosController.cs e TarefasController.cs com as ações de Create, Read, Update, Delete (CRUD) prontas.
+
+- As pastas Views/Funcionarios e Views/Tarefas com os arquivos .cshtml correspondentes (Index, Create, Edit, Details, Delete).
+
+Basta pressionar F5 para executar a aplicação e navegar até /Funcionarios ou /Tarefas para visualizar seu CRUD totalmente funcional conectado ao banco SQL Server! 🚀
+
+
+# 📝 Exercícios de Fixação: Orientação a Objetos e ORM com C# / Entity Framework
+
+Com base na estrutura de banco de dados e nas classes geradas para o projeto `dbTasks` (`Funcionario` e `Tarefa`), responda às questões abaixo para testar seus conhecimentos em **Orientação a Objetos (POO)** e **Mapeamento Objeto-Relacional (ORM)**.
+
 ---
 
-## 🛠️ Passo 1: Configuração da Nova Branch
+### 1. Relacionamento e Associação de Objetos
+Analisando a chave estrangeira `FK_Tarefa_Funcionario`, onde a tabela `Tarefa` possui a coluna `FuncionarioId` apontando para a tabela `Funcionario`, como essa relação de **1 para N (1:N)** é representada em C# nas classes de modelo?
 
-Antes de colocar a mão no código, precisamos garantir que o projeto está organizado seguindo o fluxo de ramificações (GitFlow).
-1. Certifique-se de que você está na sua branch principal de desenvolvimento (develop) atualizada.
-2. Caso ainda não tenha feito o fork ou precise sincronizar sua base, garanta que seu repositório local esteja atualizado.
-3. Crie e mude para uma nova branch específica para esta atividade chamada LabSofUseCase02-TaskFrontSemRazor.
-
----
-
-## 📝 Passo 2: Migração do Front-end para HTML Puro
-
-O ASP.NET MVC utiliza recursos do Razor (como asp-action e propriedades automáticas) para agilizar o desenvolvimento. Porém, entender como o HTML bruto se comunica com as rotas do servidor é essencial para qualquer desenvolvedor.
-
-Abra o arquivo Views/Tarefa/Index.cshtml do seu projeto, substitua todo o conteúdo atual pelo código em HTML puro abaixo e salve o arquivo:
-
-
-```html
-@model IEnumerable<AppTask.Models.Tarefa>
-
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
-
-<p>
-    <a href="/Tarefa/Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Data Planejada</th>
-            <th>Data Iniciada</th>
-            <th>Data Finalizada</th>
-            <th>Data Cancelada</th>
-            <th>Status da Tarefa</th>
-            <th>Prazo</th>
-            <th>Funcionário</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr>
-                <td>@item.Descricao</td>
-                <td>@item.DataPlanejada</td>
-                <td>@item.DataIniciada</td>
-                <td>@item.DataFinalizada</td>
-                <td>@item.DataCancelada</td>
-                <td>@item.StatusTarefa</td>
-                <td>@item.Prazo</td>
-                <td>@item.Funcionario?.Nome</td>
-                <td>
-                    <a href="/Tarefa/Edit/@item.Codigo">Edit</a> |
-                    <a href="/Tarefa/Details/@item.Codigo">Details</a> |
-                    <a href="/Tarefa/Delete/@item.Codigo">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-```
+- [ ] **A)** A classe `Funcionario` possui uma propriedade `public Tarefa Tarefa { get; set; }` e a classe `Tarefa` possui uma propriedade `public List<Funcionario> Funcionarios { get; set; }`.
+- [ ] **B)** A classe `Funcionario` possui uma propriedade de navegação `public virtual ICollection<Tarefa> Tarefas { get; set; }` e a classe `Tarefa` possui a propriedade de navegação `public virtual Funcionario Funcionario { get; set; }`.
+- [ ] **C)** Ambas as classes precisam apenas de propriedades do tipo `int` representando os IDs, sem utilizar propriedades de navegação de objetos.
+- [ ] **D)** O Entity Framework Core cria automaticamente uma terceira classe chamada `FuncionarioTarefa` para gerenciar a associação.
 
 ---
 
-## ⚡🎨 Passo 3: Customizando o Front-end com Bootstrap
+### 2. Encapsulamento e Propriedades
+No código C# gerado pelo EF Core Power Tools, as colunas das tabelas do SQL Server são mapeadas utilizando o conceito de **Propriedades (Getters e Setters)**. Qual é a principal finalidade do **Encapsulamento** ao utilizar propriedades em C# em vez de atributos/campos públicos (`public string Nome;`)?
 
-Agora que a estrutura está em HTML puro, vamos aplicar classes de estilo do Bootstrap para transformar a tabela e os links em botões modernos e amigáveis.
+- [ ] **A)** Permitir controlar o acesso e a validação dos dados de um objeto, podendo aplicar regras de negócio na leitura ou escrita sem expor os campos privados diretamente.
+- [ ] **B)** Impedir que o banco de dados armazene valores do tipo texto (`string` ou `VARCHAR`).
+- [ ] **C)** Garantir que todas as propriedades sejam obrigatoriamente estáticas (`static`).
+- [ ] **D)** Aumentar a velocidade de execução do banco de dados SQL Server.
 
-Substitua novamente o conteúdo do arquivo Views/Tarefa/Index.cshtml pelo código estilizado abaixo:
+---
 
+### 3. Abstração e Tipos Nulos (Nullable Types)
+No script SQL fornecido, as colunas `DataIniciada`, `DataFinalizada` e `DataCancelada` da tabela `Tarefa` foram criadas como `DATETIME NULL`. Como o C# representa essa abstração do banco de dados para permitir que uma data seja opcional (ou nula) no objeto?
 
-```html
-@model IEnumerable<AppTask.Models.Tarefa>
+- [ ] **A)** Utilizando o tipo `DateTime` padrão, pois ele aceita valores nulos por padrão em C#.
+- [ ] **B)** Utilizando o tipo `string`, convertendo a data para texto quando ela for nula.
+- [ ] **C)** Utilizando o tipo de dado anotado com *Nullable*: `DateTime?` ou `Nullable<DateTime>`.
+- [ ] **D)** O C# lança uma exceção de compilação caso tente mapear colunas do tipo `NULL`.
 
-@{
-    ViewData["Title"] = "Index";
-}
+---
 
-<h1 class="mb-4">Lista de Tarefas</h1>
+### 4. O Papel do DbContext (Abstração e Herança)
+A classe `dbTasksContext` herda da classe base `DbContext` do Entity Framework Core. Nesse contexto de POO, qual é o papel principal da classe `dbTasksContext`?
 
-<p>
-    <a href="/Tarefa/Create" class="btn btn-success text-white">Novo</a>
-</p>
+- [ ] **A)** Ela representa a interface gráfica (HTML/Razor) onde o usuário interage na aplicação.
+- [ ] **B)** Ela funciona como uma representação (abstração) da sessão com o banco de dados, exposta através de propriedades `DbSet<T>` que permitem realizar operações de CRUD em coleções de objetos.
+- [ ] **C)** Ela é responsável por compilar o código em linguagem de máquina para o servidor.
+- [ ] **D)** Ela substitui a necessidade de criar a camada de *Controllers* no padrão MVC.
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Descrição</th>
-            <th>Data Planejada</th>
-            <th>Data Iniciada</th>
-            <th>Data Finalizada</th>
-            <th>Data Cancelada</th>
-            <th>Status</th>
-            <th>Prazo</th>
-            <th>Funcionário</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model) {
-            <tr>
-                <td>@item.Descricao</td>
-                <td>@item.DataPlanejada</td>
-                <td>@item.DataIniciada</td>
-                <td>@item.DataFinalizada</td>
-                <td>@item.DataCancelada</td>
-                <td>@item.StatusTarefa</td>
-                <td>@item.Prazo</td>
-                <td>@item.Funcionario?.Nome</td>
-                <td>
-                    <a href="/Tarefa/Edit/@item.Codigo" class="btn btn-primary btn-sm text-white">Alterar</a>
-                    <a href="/Tarefa/Details/@item.Codigo" class="btn btn-success btn-sm text-white" style="background-color: #006400;">Detalhe</a>
-                    <a href="/Tarefa/Delete/@item.Codigo" class="btn btn-danger btn-sm text-white">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+---
 
-```
-
-## 🗑️ Passo 4: Implementando a Confirmação de Exclusão com Modal do Bootstrap em TAREFA
-
-Para melhorar a experiência do usuário, vamos substituir o redirecionamento para a página de Delete por uma caixa de diálogo elegante (Modal) utilizando os componentes nativos do Bootstrap.
-
-Atualmente para excluir uma tarefa você clica em delete e ele envia para outra página.
-![Fluxo de exclusão atual](./imagens/fluxoexclusaoatual.jpg)
-
-
-Nosso objetivo é ao clicar em delete, ele abrir um modal e ao confirmar excluir o elemento
-![Fluxo Proposto](./imagens/fluxocommodal.jpg)
-
-#### 4.1 Botão excluir - invocar modal
-
-Substituia o código que está no botão delete para ficar assim.
-
-```html
- <button type="button" class="btn btn-danger btn-sm text-white" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="@item.Codigo" data-descricao="@item.Descricao">
- Delete
-</button>
-
-```
-
-
-#### 4.2 - Adicionando caixa de DIALOGO - MODAL
-Vamos adicionar  o modal para ficar similar a imagem a seguir:
-
-![Fluxo Modal](./imagens/modalexcluir.jpg)
-
-
-
-Adicione esse código na index de tarefa 
-
-```html
-<!-- Modal de Confirmação de Exclusão -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalLabel">Confirmação de Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Deseja realmente excluir a tarefa: <strong id="tarefaDescricao"></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="modal-btn-cancel btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <!-- Formulário que dispara o POST de Delete para a Controller -->
-                <form id="deleteForm" method="post" action="">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">Sim, Excluir</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-```
-
-Rode sua aplicação. Ao tentar rodar agora ele exibe O MODAL, mas se confirmar não vai funcionar. Para que funcione iremos para o proximo passo, que é JavaScript
-
-
-#### 4.3 Script do modal
-
-No final agora do seu arquivo index.cshtml de tarefa adicione o código a seguir  e teste a exclusão.
-
-```html
-@section Scripts {
-    <script>
-        // Script para capturar os dados da linha da tabela e injetar no Modal dinamicamente
-        var deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Botão que acionou o modal
-            var id = button.getAttribute('data-id'); // Extrai o ID
-            var descricao = button.getAttribute('data-descricao'); // Extrai a descrição
-
-            // Atualiza o texto da descrição no corpo do modal
-            var modalDescricaoSpan = deleteModal.querySelector('#tarefaDescricao');
-            modalDescricaoSpan.textContent = descricao;
-
-            // Altera o atributo 'action' do formulário interno para apontar para a rota correta de delete
-            var deleteForm = deleteModal.querySelector('#deleteForm');
-            deleteForm.action = '/Tarefa/Delete/' + id;
-        });
-    </script>
-}
-
-
-```
-
-
-#### 4.4 Sem o Bootstrap como seria  (Não precisa colar no seu projeto)
-
-Sem o bootstrap para implementar as funcionaliades/ações no modal seria preciso usar recursos nativos do JS.
-
-Nesse cenario a comunicação vai funcionar assim e você poderá ver no código a seguir.
-
-- Gatilho (abrirModal): Ao clicar no botão Delete de qualquer linha da tabela, o JS extrai o data-id e o data-descricao.
-
-- Injeção da Rota: O JS altera o atributo action do formulário <form id="deleteForm"> definindo o endereço correto da Controller, como /Tarefa/Delete/1.
-
-- Envio (POST): Ao clicar no botão Sim, Excluir, o formulário HTML faz uma requisição POST nativa do navegador para a Controller, enviando junto o token de segurança @Html.AntiForgeryToken().
-
-
-
- Veja agora o código
-
-
-
-```html
-<!-- Estilo Mínimo Nativo -->
-<style>
-    /* Fundo escuro translúcido (Backdrop) */
-    .modal-fundo {
-        display: none; /* Inicia oculto */
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-    }
-
-    /* Caixa do Modal */
-    .modal-caixa {
-        position: fixed;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        min-width: 320px;
-    }
-
-    .modal-acoes {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 20px;
-    }
-</style>
-
-<!-- Exemplo de Tabela com Botão Excluir Nativo -->
-<table>
-    <tr>
-        <td>Criar tela de Login</td>
-        <td>
-            <button type="button" class="btn-delete" data-id="1" data-descricao="Criar tela de Login">
-                Delete
-            </button>
-        </td>
-    </tr>
-</table>
-
-<!-- Estrutura do Modal -->
-<div id="meuModal" class="modal-fundo">
-    <div class="modal-caixa">
-        <h3>Confirmação de Exclusão</h3>
-        <p>Deseja realmente excluir a tarefa: <strong id="tarefaDescricao"></strong>?</p>
-        
-        <div class="modal-acoes">
-            <!-- Botão de Fechar Nativo -->
-            <button type="button" id="btnFechar">Cancelar</button>
-
-            <!-- Formulário HTML que dispara o POST para a Controller -->
-            <form id="deleteForm" method="post" action="">
-                @Html.AntiForgeryToken()
-                <button type="submit">Sim, Excluir</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Script Puro (Zero Bibliotecas) -->
-<script>
-    var modal = document.getElementById('meuModal');
-    var btnFechar = document.getElementById('btnFechar');
-    var deleteForm = document.getElementById('deleteForm');
-    var modalDescricaoSpan = document.getElementById('tarefaDescricao');
-
-    // 1. Função manual para ABRIR o modal e injetar os dados da tarefa
-    function abrirModal(id, descricao) {
-        // Atualiza a descrição na tela
-        modalDescricaoSpan.textContent = descricao;
-
-        // Configura a rota de envio da controller dinamicamente (ex: /Tarefa/Delete/1)
-        deleteForm.action = '/Tarefa/Delete/' + id;
-
-        // Exibe o modal
-        modal.style.display = 'block';
-    }
-
-    // 2. Função manual para FECHAR o modal
-    function fecharModal() {
-        modal.style.display = 'none';
-    }
-
-    // 3. Captura o clique em qualquer botão "Delete" da tabela
-    document.querySelectorAll('.btn-delete').forEach(function(button) {
-        button.addEventListener('click', function() {
-            var id = this.getAttribute('data-id');
-            var descricao = this.getAttribute('data-descricao');
-            abrirModal(id, descricao);
-        });
-    });
-
-    // 4. Evento de clique no botão Cancelar
-    btnFechar.addEventListener('click', fecharModal);
-
-    // 5. Fechar ao clicar no fundo escuro translúcido
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            fecharModal();
-        }
-    });
-</script>
-
-
-```
-
-
-### 4.5 Conhecendo as classes Bootstrap (Reforçando)
-
-| Classe / Atributo HTML | Função / O que ele faz |
-| :--- | :--- |
-| `class="modal fade"` | Transforma a <div> em uma janela flutuante e aplica a animação suave de transição (fade-in/fade-out). |
-| `tabindex="-1"` | Desativa a navegação normal por Tab na página e prende o foco dentro da janela do Modal. |
-| `aria-labelledby="deleteModalLabel"` | Recursos de acessibilidade (Screen Readers): conecta o container do Modal ao seu título principal. |
-| `aria-hidden="true"` | Mantém a janela oculta para leitores de tela enquanto o Modal não for ativado. |
-| `class="modal-dialog"` | Controla as dimensões, margens e centralização da caixa de diálogo na tela. |
-| `class="modal-content"` | Renderiza o contêiner interno com fundo branco, cantos arredondados e sombra projetada. |
-| `class="modal-header bg-danger text-white"` | Define o topo do Modal estilizado em vermelho (bg-danger) com texto em branco. |
-| `class="modal-body"` | Espaço reservado para a mensagem principal de confirmação apresentada ao usuário.|
-| `class="modal-footer"` | Área reservada para o agrupamento de ações e botões no rodapé da janela.|
-| `data-bs-dismiss="modal"` | Atributo JavaScript nativo do Bootstrap que fecha o Modal imediatamente ao ser clicado. |
-| `data-bs-toggle="modal"` | Define a intenção do botão de disparar a abertura de um elemento do tipo Modal. |
- `data-bs-target="#deleteModal"` | Aponta exatamente qual Modal (pelo id) deve ser aberto ao clicar no botão.. |
-
-
-
-
-## ➕ Passo 5: Refatorando o Create de Tarefa
-
-Neste passo, vamos refatorar a View de criação (`Views/Tarefa/Create.cshtml`). Substituiremos os Tag Helpers do ASP.NET (`asp-action`, `asp-for`, `asp-items`) por **HTML Puro** utilizando atributos nativos (`action`, `method`, `name`, `id`), mantendo a integração correta com a Controller através dos nomes das propriedades e da `@Html.AntiForgeryToken()`.
-
-Abra o arquivo `Views/Tarefa/Create.cshtml`, substitua todo o seu conteúdo pelo código abaixo e salve:
-
-```html
-@model AppTask.Models.Tarefa
-
-@{
-    ViewData["Title"] = "Nova Tarefa";
-}
-
-<h1 class="mb-4">Cadastrar Nova Tarefa</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <form action="/Tarefa/Create" method="post">
-            @Html.AntiForgeryToken()
-
-            <div class="mb-3">
-                <label for="Descricao" class="form-label font-weight-bold">Descrição</label>
-                <input type="text" id="Descricao" name="Descricao" class="form-control" placeholder="Digite a descrição da tarefa" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="DataPlanejada" class="form-label">Data Planejada</label>
-                <input type="datetime-local" id="DataPlanejada" name="DataPlanejada" class="form-control" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="DataIniciada" class="form-label">Data Iniciada</label>
-                <input type="datetime-local" id="DataIniciada" name="DataIniciada" class="form-control" />
-            </div>
-
-            <div class="mb-3">
-                <label for="DataFinalizada" class="form-label">Data Finalizada</label>
-                <input type="datetime-local" id="DataFinalizada" name="DataFinalizada" class="form-control" />
-            </div>
-
-            <div class="mb-3">
-                <label for="DataCancelada" class="form-label">Data Cancelada</label>
-                <input type="datetime-local" id="DataCancelada" name="DataCancelada" class="form-control" />
-            </div>
-
-            <div class="mb-3">
-                <label for="StatusTarefa" class="form-label">Status da Tarefa</label>
-                <select id="StatusTarefa" name="StatusTarefa" class="form-select" required>
-                    <option value="">-- Selecione o Status --</option>
-                    <option value="Pendente">Pendente</option>
-                    <option value="Em Andamento">Em Andamento</option>
-                    <option value="Concluído">Concluído</option>
-                    <option value="Cancelado">Cancelado</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="Prazo" class="form-label">Prazo</label>
-                <input type="text" id="Prazo" name="Prazo" class="form-control" placeholder="Ex: Em dia, Em atraso" required />
-            </div>
-
-            <div class="mb-3">
-                <label for="FuncionarioId" class="form-label">Funcionário Responsável</label>
-                <select id="FuncionarioId" name="FuncionarioId" class="form-select" required>
-                    <option value="">-- Selecione um Funcionário --</option>
-                    @if (ViewBag.ListaFuncionario != null)
-                    {
-                        foreach (var item in (IEnumerable<SelectListItem>)ViewBag.ListaFuncionario)
-                        {
-                            <option value="@item.Value">@item.Text</option>
-                        }
-                    }
-                </select>
-            </div>
-
-            <div class="mb-3 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Salvar Tarefa</button>
-                <a href="/Tarefa/Index" class="btn btn-secondary">Voltar para a Lista</a>
-            </div>
-        </form>
-    </div>
-</div>
-```
-
-Principais Mudanças Aplicadas no HTML Puro
-- Envio de Formulário: Substituição de asp-action="Create" por action="/Tarefa/Create" method="post" acompanhado do @Html.AntiForgeryToken().
-
-- Mapeamento do Model: Troca de asp-for="Propriedade" por atributos nativos id="Propriedade" e name="Propriedade". O ASP.NET Binder utiliza o atributo name para mapear os dados diretamente no objeto da Controller.
-
-- Select do Funcionário: Substituição do asp-items por um loop @foreach manual iterando sobre a coleção (IEnumerable<SelectListItem>)ViewBag.ListaFuncionario.
-
-- Inputs Específicos: Definição do atributo type="datetime-local" nos campos de data para habilitar o seletor nativo de data e hora do navegador.
-
-
-
-## ➕➕ Passo 6: Refatorando Funcionario, Incidente, Departamento e CentralDeCusto
-
-Usando a mesma estratégia praticado nos passos anteriroes. Faça a refatoraçao dos arquivos 'index' e 'create' dos fluxos de Funcionario, Incidente, Departamento e CentralDeCusto.
-
-
-Para cada fluxo sempre crie um branch nova e depois de testar faça o merge com develop.
-
-
-## Resumo (Infográfico)
-
-Códigos Javascript
-![Código JS](./imagens/revisaogeral1.jpg)
-
-
-Revisão CSS
-![Código JS](./imagens/revisaocss.jpg)
-
-
-
-## Informação Extra - JS e JQuery
-
-Você pode deixar seu código front end 100% sem uso de razor você pode usar o JS com Jquery. É comum encontra essa estrutura em aplicações que já estão em produção há um tempo.
-
-Veja como ficaria o seu código de Index Tarefa.
-
-HTML
-```html
-<h1>Index</h1>
-
-<p>
-    <a href="/Tarefa/Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Descrição</th>
-            <th>Data Planejada</th>
-            <th>Data Iniciada</th>
-            <th>Data Finalizada</th>
-            <th>Data Cancelada</th>
-            <th>Status da Tarefa</th>
-            <th>Prazo</th>
-            <th>Funcionário</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="tabela-tarefas">
-        <!-- O conteúdo será gerado via JS -->
-    </tbody>
-</table>
-
-```
-
-E agora o JS com Jquery
-
-```html
-<script>
-$(document).ready(function () {
-    // Busca os dados da controller (Endpoint JSON)
-    $.ajax({
-        url: '/Tarefa/ObterTodas', // Ajuste para a sua rota de API/Controller
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            let linhas = '';
-
-            $.each(data, function (index, item) {
-                // Trata propriedades nulas ou não formatadas
-                let funcionarioNome = item.funcionario ? item.funcionario.nome : '';
-                let dataPlanejada = item.dataPlanejada ? new Date(item.dataPlanejada).toLocaleDateString() : '';
-                let dataIniciada = item.dataIniciada ? new Date(item.dataIniciada).toLocaleDateString() : '';
-                let dataFinalizada = item.dataFinalizada ? new Date(item.dataFinalizada).toLocaleDateString() : '';
-                let dataCancelada = item.dataCancelada ? new Date(item.dataCancelada).toLocaleDateString() : '';
-
-                linhas += `
-                    <tr>
-                        <td>${item.descricao || ''}</td>
-                        <td>${dataPlanejada}</td>
-                        <td>${dataIniciada}</td>
-                        <td>${dataFinalizada}</td>
-                        <td>${dataCancelada}</td>
-                        <td>${item.statusTarefa || ''}</td>
-                        <td>${item.prazo || ''}</td>
-                        <td>${funcionarioNome}</td>
-                        <td>
-                            <a href="/Tarefa/Edit/${item.codigo}">Edit</a> |
-                            <a href="/Tarefa/Details/${item.codigo}">Details</a> |
-                            <a href="/Tarefa/Delete/${item.codigo}">Delete</a>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            // Insere as linhas geradas na tabela
-            $('#tabela-tarefas').html(linhas);
-        },
-        error: function (error) {
-            console.error('Erro ao carregar tarefas:', error);
-        }
-    });
-});
-</script>
-
-```
-
-Como ficaria a controller
+### 5. Instanciação e Ciclo de Vida de Objetos
+Considere o seguinte trecho de código em um método do Controller:
 
 ```csharp
-[HttpGet]
-public async Task<IActionResult> ObterTodas()
+var novaTarefa = new Tarefa
 {
-    var tarefas = await _context.Tarefas.Include(t => t.Funcionario).ToListAsync();
-    return Json(tarefas);
-}
-```
+    Descricao = "Ajustar regras do CSS",
+    DataPlanejada = DateTime.Now,
+    StatusTarefa = "Pendente",
+    Prazo = "Em dia",
+    FuncionarioId = 1
+};
