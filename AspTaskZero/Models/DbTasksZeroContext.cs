@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspTaskZero.Models;
@@ -35,6 +36,10 @@ public partial class DbTasksZeroContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.IdGerenteNavigation).WithMany(p => p.InverseIdGerenteNavigation)
+                .HasForeignKey(d => d.IdGerente)
+                .HasConstraintName("FK__Funcionar__IdGer__5AEE82B9");
         });
 
         modelBuilder.Entity<Tarefa>(entity =>

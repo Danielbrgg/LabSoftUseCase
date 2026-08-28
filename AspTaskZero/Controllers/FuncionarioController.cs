@@ -21,7 +21,8 @@ namespace AspTaskZero.Controllers
         // GET: Funcionario
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Funcionarios.ToListAsync());
+            var dbTasksZeroContext = _context.Funcionarios.Include(f => f.IdGerenteNavigation);
+            return View(await dbTasksZeroContext.ToListAsync());
         }
 
         // GET: Funcionario/Details/5
@@ -33,6 +34,7 @@ namespace AspTaskZero.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.IdGerenteNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
             if (funcionario == null)
             {
@@ -45,6 +47,7 @@ namespace AspTaskZero.Controllers
         // GET: Funcionario/Create
         public IActionResult Create()
         {
+            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
             return View();
         }
 
@@ -53,7 +56,7 @@ namespace AspTaskZero.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo,IdGerente")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +64,7 @@ namespace AspTaskZero.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.IdGerente);
             return View(funcionario);
         }
 
@@ -77,6 +81,7 @@ namespace AspTaskZero.Controllers
             {
                 return NotFound();
             }
+            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.IdGerente);
             return View(funcionario);
         }
 
@@ -85,7 +90,7 @@ namespace AspTaskZero.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo,IdGerente")] Funcionario funcionario)
         {
             if (id != funcionario.Codigo)
             {
@@ -112,6 +117,7 @@ namespace AspTaskZero.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.IdGerente);
             return View(funcionario);
         }
 
@@ -124,6 +130,7 @@ namespace AspTaskZero.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.IdGerenteNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
             if (funcionario == null)
             {
