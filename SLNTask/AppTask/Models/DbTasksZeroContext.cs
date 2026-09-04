@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppTask.Models;
 
-public partial class DbTasksContext : DbContext
+public partial class DbTasksZeroContext : DbContext
 {
-    public DbTasksContext()
+    public DbTasksZeroContext()
     {
     }
 
-    public DbTasksContext(DbContextOptions<DbTasksContext> options)
+    public DbTasksZeroContext(DbContextOptions<DbTasksZeroContext> options)
         : base(options)
     {
     }
@@ -26,7 +26,7 @@ public partial class DbTasksContext : DbContext
     {
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DADCC2F491C");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD87586494");
 
             entity.ToTable("Funcionario");
 
@@ -36,11 +36,20 @@ public partial class DbTasksContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.CodigoGerenteNavigation).WithMany(p => p.InverseCodigoGerenteNavigation)
+                .HasForeignKey(d => d.CodigoGerente)
+                .HasConstraintName("FK__Funcionar__Codig__6E01572D");
+
+            entity.HasOne(d => d.IdGerenteNavigation).WithMany(p => p.InverseIdGerenteNavigation)
+                .HasForeignKey(d => d.IdGerente)
+                .HasConstraintName("FK__Funcionar__IdGer__5AEE82B9");
         });
+
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD89C1CEB3");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DADF43B9EE7");
 
             entity.ToTable("Tarefa");
 
