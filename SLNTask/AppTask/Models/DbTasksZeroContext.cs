@@ -15,7 +15,13 @@ public partial class DbTasksZeroContext : DbContext
     {
     }
 
+    public virtual DbSet<CentralDeCusto> CentralDeCustos { get; set; }
+
+    public virtual DbSet<Departamento> Departamentos { get; set; }
+
     public virtual DbSet<Funcionario> Funcionarios { get; set; }
+
+    public virtual DbSet<Incidente> Incidentes { get; set; }
 
     public virtual DbSet<Tarefa> Tarefas { get; set; }
 
@@ -24,6 +30,31 @@ public partial class DbTasksZeroContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CentralDeCusto>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__CentralD__06370DAD9B84DC40");
+
+            entity.ToTable("CentralDeCusto");
+
+            entity.Property(e => e.NomeCentral)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.ValorMetaAnual)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<Departamento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DAD9C1BC13A");
+
+            entity.ToTable("Departamento");
+
+            entity.Property(e => e.Descricao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Funcionario>(entity =>
         {
             entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD87586494");
@@ -46,6 +77,23 @@ public partial class DbTasksZeroContext : DbContext
                 .HasConstraintName("FK__Funcionar__IdGer__5AEE82B9");
         });
 
+        modelBuilder.Entity<Incidente>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DAD4F1B564A");
+
+            entity.ToTable("Incidente");
+
+            entity.Property(e => e.DataIncidente).HasColumnType("datetime");
+            entity.Property(e => e.DescricaoProblema)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Resolvido)
+                .HasMaxLength(3)
+                .IsUnicode(false);
+            entity.Property(e => e.Solucao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+        });
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
