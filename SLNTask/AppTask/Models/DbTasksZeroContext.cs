@@ -32,7 +32,7 @@ public partial class DbTasksZeroContext : DbContext
     {
         modelBuilder.Entity<CentralDeCusto>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__CentralD__06370DAD9B84DC40");
+            entity.HasKey(e => e.Codigo).HasName("PK__CentralD__06370DADEEDC9010");
 
             entity.ToTable("CentralDeCusto");
 
@@ -46,7 +46,7 @@ public partial class DbTasksZeroContext : DbContext
 
         modelBuilder.Entity<Departamento>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DAD9C1BC13A");
+            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DADFFC7610D");
 
             entity.ToTable("Departamento");
 
@@ -57,7 +57,7 @@ public partial class DbTasksZeroContext : DbContext
 
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD87586494");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD275532BF");
 
             entity.ToTable("Funcionario");
 
@@ -70,16 +70,12 @@ public partial class DbTasksZeroContext : DbContext
 
             entity.HasOne(d => d.CodigoGerenteNavigation).WithMany(p => p.InverseCodigoGerenteNavigation)
                 .HasForeignKey(d => d.CodigoGerente)
-                .HasConstraintName("FK__Funcionar__Codig__6E01572D");
-
-            entity.HasOne(d => d.IdGerenteNavigation).WithMany(p => p.InverseIdGerenteNavigation)
-                .HasForeignKey(d => d.IdGerente)
-                .HasConstraintName("FK__Funcionar__IdGer__5AEE82B9");
+                .HasConstraintName("FK__Funcionar__Codig__29572725");
         });
 
         modelBuilder.Entity<Incidente>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DAD4F1B564A");
+            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DADBE473B61");
 
             entity.ToTable("Incidente");
 
@@ -97,7 +93,7 @@ public partial class DbTasksZeroContext : DbContext
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DADF43B9EE7");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD732031CF");
 
             entity.ToTable("Tarefa");
 

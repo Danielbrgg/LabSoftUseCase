@@ -1,4 +1,4 @@
-﻿@model IEnumerable<AppTask.Models.Funcionario>
+﻿@model IEnumerable<AppTask.Models.CentralDeCusto>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,13 +13,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Nome)
+                @Html.DisplayNameFor(model => model.NomeCentral)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cargo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CodigoGerenteNavigation)
+                @Html.DisplayNameFor(model => model.ValorMetaAnual)
             </th>
             <th></th>
         </tr>
@@ -28,13 +25,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Nome)
+                @Html.DisplayFor(modelItem => item.NomeCentral)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cargo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CodigoGerenteNavigation.Codigo)
+                @Html.DisplayFor(modelItem => item.ValorMetaAnual)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |

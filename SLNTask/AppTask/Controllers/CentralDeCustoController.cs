@@ -9,22 +9,22 @@ using AppTask.Models;
 
 namespace AppTask.Controllers
 {
-    public class CentralDeCustosController : Controller
+    public class CentralDeCustoController : Controller
     {
         private readonly DbTasksZeroContext _context;
 
-        public CentralDeCustosController(DbTasksZeroContext context)
+        public CentralDeCustoController(DbTasksZeroContext context)
         {
             _context = context;
         }
 
-        // GET: CentralDeCustos
+        // GET: CentralDeCusto
         public async Task<IActionResult> Index()
         {
             return View(await _context.CentralDeCustos.ToListAsync());
         }
 
-        // GET: CentralDeCustos/Details/5
+        // GET: CentralDeCusto/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,13 +42,13 @@ namespace AppTask.Controllers
             return View(centralDeCusto);
         }
 
-        // GET: CentralDeCustos/Create
+        // GET: CentralDeCusto/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: CentralDeCustos/Create
+        // POST: CentralDeCusto/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -64,7 +64,7 @@ namespace AppTask.Controllers
             return View(centralDeCusto);
         }
 
-        // GET: CentralDeCustos/Edit/5
+        // GET: CentralDeCusto/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,7 +80,7 @@ namespace AppTask.Controllers
             return View(centralDeCusto);
         }
 
-        // POST: CentralDeCustos/Edit/5
+        // POST: CentralDeCusto/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -115,7 +115,7 @@ namespace AppTask.Controllers
             return View(centralDeCusto);
         }
 
-        // GET: CentralDeCustos/Delete/5
+        // GET: CentralDeCusto/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,7 +133,7 @@ namespace AppTask.Controllers
             return View(centralDeCusto);
         }
 
-        // POST: CentralDeCustos/Delete/5
+        // POST: CentralDeCusto/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

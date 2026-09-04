@@ -36,7 +36,6 @@ namespace AppTask.Controllers
             var tarefa = await _context.Tarefas
                 .Include(t => t.Funcionario)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
-
             if (tarefa == null)
             {
                 return NotFound();
@@ -48,36 +47,24 @@ namespace AppTask.Controllers
         // GET: Tarefa/Create
         public IActionResult Create()
         {
-            ViewData["FuncionarioId"] = new SelectList(
-                _context.Funcionarios,
-                "Codigo",
-                "Codigo"
-            );
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
             return View();
         }
 
         // POST: Tarefa/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("Codigo,Descricao,DataPlanejada,DataIniciada,DataFinalizada,DataCancelada,StatusTarefa,Prazo,FuncionarioId")] Tarefa tarefa)
+        public async Task<IActionResult> Create([Bind("Codigo,Descricao,DataPlanejada,DataIniciada,DataFinalizada,DataCancelada,StatusTarefa,Prazo,FuncionarioId")] Tarefa tarefa)
         {
             if (ModelState.IsValid)
             {
-                _context.Tarefas.Add(tarefa);
+                _context.Add(tarefa);
                 await _context.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["FuncionarioId"] = new SelectList(
-                _context.Funcionarios,
-                "Codigo",
-                "Codigo",
-                tarefa.FuncionarioId
-            );
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
@@ -90,28 +77,20 @@ namespace AppTask.Controllers
             }
 
             var tarefa = await _context.Tarefas.FindAsync(id);
-
             if (tarefa == null)
             {
                 return NotFound();
             }
-
-            ViewData["FuncionarioId"] = new SelectList(
-                _context.Funcionarios,
-                "Codigo",
-                "Codigo",
-                tarefa.FuncionarioId
-            );
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
         // POST: Tarefa/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            int id,
-            [Bind("Codigo,Descricao,DataPlanejada,DataIniciada,DataFinalizada,DataCancelada,StatusTarefa,Prazo,FuncionarioId")] Tarefa tarefa)
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Descricao,DataPlanejada,DataIniciada,DataFinalizada,DataCancelada,StatusTarefa,Prazo,FuncionarioId")] Tarefa tarefa)
         {
             if (id != tarefa.Codigo)
             {
@@ -131,20 +110,14 @@ namespace AppTask.Controllers
                     {
                         return NotFound();
                     }
-
-                    throw;
+                    else
+                    {
+                        throw;
+                    }
                 }
-
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["FuncionarioId"] = new SelectList(
-                _context.Funcionarios,
-                "Codigo",
-                "Codigo",
-                tarefa.FuncionarioId
-            );
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
@@ -159,7 +132,6 @@ namespace AppTask.Controllers
             var tarefa = await _context.Tarefas
                 .Include(t => t.Funcionario)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
-
             if (tarefa == null)
             {
                 return NotFound();
@@ -174,14 +146,12 @@ namespace AppTask.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tarefa = await _context.Tarefas.FindAsync(id);
-
             if (tarefa != null)
             {
                 _context.Tarefas.Remove(tarefa);
             }
 
             await _context.SaveChangesAsync();
-
             return RedirectToAction(nameof(Index));
         }
 

@@ -21,7 +21,7 @@ namespace AppTask.Controllers
         // GET: Funcionario
         public async Task<IActionResult> Index()
         {
-            var dbTasksZeroContext = _context.Funcionarios.Include(f => f.CodigoGerenteNavigation).Include(f => f.IdGerenteNavigation);
+            var dbTasksZeroContext = _context.Funcionarios.Include(f => f.CodigoGerenteNavigation);
             return View(await dbTasksZeroContext.ToListAsync());
         }
 
@@ -35,7 +35,6 @@ namespace AppTask.Controllers
 
             var funcionario = await _context.Funcionarios
                 .Include(f => f.CodigoGerenteNavigation)
-                .Include(f => f.IdGerenteNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
             if (funcionario == null)
             {
@@ -48,7 +47,7 @@ namespace AppTask.Controllers
         // GET: Funcionario/Create
         public IActionResult Create()
         {
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Nome");
+            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
             return View();
         }
 
@@ -57,7 +56,7 @@ namespace AppTask.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo,IdGerente,CodigoGerente")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo,CodigoGerente")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -66,7 +65,6 @@ namespace AppTask.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.CodigoGerente);
-            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.IdGerente);
             return View(funcionario);
         }
 
@@ -83,7 +81,7 @@ namespace AppTask.Controllers
             {
                 return NotFound();
             }
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", funcionario.CodigoGerente);
+            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.CodigoGerente);
             return View(funcionario);
         }
 
@@ -92,7 +90,7 @@ namespace AppTask.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo,IdGerente,CodigoGerente")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo,CodigoGerente")] Funcionario funcionario)
         {
             if (id != funcionario.Codigo)
             {
@@ -120,7 +118,6 @@ namespace AppTask.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.CodigoGerente);
-            ViewData["IdGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.IdGerente);
             return View(funcionario);
         }
 
@@ -134,7 +131,6 @@ namespace AppTask.Controllers
 
             var funcionario = await _context.Funcionarios
                 .Include(f => f.CodigoGerenteNavigation)
-                .Include(f => f.IdGerenteNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
             if (funcionario == null)
             {
