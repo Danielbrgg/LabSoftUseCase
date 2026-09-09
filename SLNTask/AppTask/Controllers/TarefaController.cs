@@ -47,7 +47,7 @@ namespace AppTask.Controllers
         // GET: Tarefa/Create
         public IActionResult Create()
         {
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Nome");
             return View();
         }
 
