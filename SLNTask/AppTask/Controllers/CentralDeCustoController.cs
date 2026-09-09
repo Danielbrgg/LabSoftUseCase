@@ -9,23 +9,22 @@ using AppTask.Models;
 
 namespace AppTask.Controllers
 {
-    public class FuncionarioController : Controller
+    public class CentralDeCustoController : Controller
     {
         private readonly DbTasksZeroContext _context;
 
-        public FuncionarioController(DbTasksZeroContext context)
+        public CentralDeCustoController(DbTasksZeroContext context)
         {
             _context = context;
         }
 
-        // GET: Funcionario
+        // GET: CentralDeCusto
         public async Task<IActionResult> Index()
         {
-            var dbTasksZeroContext = _context.Funcionarios.Include(f => f.CodigoGerenteNavigation);
-            return View(await dbTasksZeroContext.ToListAsync());
+            return View(await _context.CentralDeCustos.ToListAsync());
         }
 
-        // GET: Funcionario/Details/5
+        // GET: CentralDeCusto/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,42 +32,39 @@ namespace AppTask.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .Include(f => f.CodigoGerenteNavigation)
+            var centralDeCusto = await _context.CentralDeCustos
                 .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (funcionario == null)
+            if (centralDeCusto == null)
             {
                 return NotFound();
             }
 
-            return View(funcionario);
+            return View(centralDeCusto);
         }
 
-        // GET: Funcionario/Create
+        // GET: CentralDeCusto/Create
         public IActionResult Create()
         {
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Nome");
             return View();
         }
 
-        // POST: Funcionario/Create
+        // POST: CentralDeCusto/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo,IdGerente,CodigoGerente")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Codigo,NomeCentral,ValorMetaAnual")] CentralDeCusto centralDeCusto)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(funcionario);
+                _context.Add(centralDeCusto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.CodigoGerente);
-            return View(funcionario);
+            return View(centralDeCusto);
         }
 
-        // GET: Funcionario/Edit/5
+        // GET: CentralDeCusto/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,23 +72,22 @@ namespace AppTask.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario == null)
+            var centralDeCusto = await _context.CentralDeCustos.FindAsync(id);
+            if (centralDeCusto == null)
             {
                 return NotFound();
             }
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", funcionario.CodigoGerente);
-            return View(funcionario);
+            return View(centralDeCusto);
         }
 
-        // POST: Funcionario/Edit/5
+        // POST: CentralDeCusto/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo,IdGerente,CodigoGerente")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,NomeCentral,ValorMetaAnual")] CentralDeCusto centralDeCusto)
         {
-            if (id != funcionario.Codigo)
+            if (id != centralDeCusto.Codigo)
             {
                 return NotFound();
             }
@@ -101,12 +96,12 @@ namespace AppTask.Controllers
             {
                 try
                 {
-                    _context.Update(funcionario);
+                    _context.Update(centralDeCusto);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FuncionarioExists(funcionario.Codigo))
+                    if (!CentralDeCustoExists(centralDeCusto.Codigo))
                     {
                         return NotFound();
                     }
@@ -117,11 +112,10 @@ namespace AppTask.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoGerente"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", funcionario.CodigoGerente);
-            return View(funcionario);
+            return View(centralDeCusto);
         }
 
-        // GET: Funcionario/Delete/5
+        // GET: CentralDeCusto/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,36 +123,34 @@ namespace AppTask.Controllers
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .Include(f => f.CodigoGerenteNavigation)
-                
+            var centralDeCusto = await _context.CentralDeCustos
                 .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (funcionario == null)
+            if (centralDeCusto == null)
             {
                 return NotFound();
             }
 
-            return View(funcionario);
+            return View(centralDeCusto);
         }
 
-        // POST: Funcionario/Delete/5
+        // POST: CentralDeCusto/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario != null)
+            var centralDeCusto = await _context.CentralDeCustos.FindAsync(id);
+            if (centralDeCusto != null)
             {
-                _context.Funcionarios.Remove(funcionario);
+                _context.CentralDeCustos.Remove(centralDeCusto);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FuncionarioExists(int id)
+        private bool CentralDeCustoExists(int id)
         {
-            return _context.Funcionarios.Any(e => e.Codigo == id);
+            return _context.CentralDeCustos.Any(e => e.Codigo == id);
         }
     }
 }

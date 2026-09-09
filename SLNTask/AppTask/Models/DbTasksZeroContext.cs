@@ -15,7 +15,13 @@ public partial class DbTasksZeroContext : DbContext
     {
     }
 
+    public virtual DbSet<CentralDeCusto> CentralDeCustos { get; set; }
+
+    public virtual DbSet<Departamento> Departamentos { get; set; }
+
     public virtual DbSet<Funcionario> Funcionarios { get; set; }
+
+    public virtual DbSet<Incidente> Incidentes { get; set; }
 
     public virtual DbSet<Tarefa> Tarefas { get; set; }
 
@@ -24,9 +30,34 @@ public partial class DbTasksZeroContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<CentralDeCusto>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__CentralD__06370DADEEDC9010");
+
+            entity.ToTable("CentralDeCusto");
+
+            entity.Property(e => e.NomeCentral)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.ValorMetaAnual)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 0)");
+        });
+
+        modelBuilder.Entity<Departamento>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DADFFC7610D");
+
+            entity.ToTable("Departamento");
+
+            entity.Property(e => e.Descricao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD87586494");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD275532BF");
 
             entity.ToTable("Funcionario");
 
@@ -39,17 +70,30 @@ public partial class DbTasksZeroContext : DbContext
 
             entity.HasOne(d => d.CodigoGerenteNavigation).WithMany(p => p.InverseCodigoGerenteNavigation)
                 .HasForeignKey(d => d.CodigoGerente)
-                .HasConstraintName("FK__Funcionar__Codig__6E01572D");
-
-            entity.HasOne(d => d.IdGerenteNavigation).WithMany(p => p.InverseIdGerenteNavigation)
-                .HasForeignKey(d => d.IdGerente)
-                .HasConstraintName("FK__Funcionar__IdGer__5AEE82B9");
+                .HasConstraintName("FK__Funcionar__Codig__29572725");
         });
 
+        modelBuilder.Entity<Incidente>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DADBE473B61");
+
+            entity.ToTable("Incidente");
+
+            entity.Property(e => e.DataIncidente).HasColumnType("datetime");
+            entity.Property(e => e.DescricaoProblema)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Resolvido)
+                .HasMaxLength(3)
+                .IsUnicode(false);
+            entity.Property(e => e.Solucao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+        });
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DADF43B9EE7");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD732031CF");
 
             entity.ToTable("Tarefa");
 
