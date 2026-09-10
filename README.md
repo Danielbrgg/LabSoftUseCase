@@ -45,8 +45,6 @@ ATENÇÃO
 No mercado do trabalho o imporante é focar no pedido solicitado. Se um gestor pede para implementar o DER acima, foque nessa entrega. Não é interessante criar outras tabelas e campos sem antes alinhar com a sua supervisão.
 
 
-## 🗄️ Etapa 3: CRIA O BANCO DE DADOS NO SQL SERVER
-
 Para crair o banco de dados você pode fazer via Script, ou via interface do SQL Server Management.
 
 Vamos fazer usando a proposta de intereface (cliques, tela).
@@ -68,50 +66,161 @@ Vamos fazer usando a proposta de intereface (cliques, tela).
 
 ![Criando diagrama](./imagens/passo4_criandoDiagrama.png)
 
+Atenção, se aparecer alguma mensagem pode confirmar **Sim**, ou ok. Também, deve aparecer uma tela para adicionar tabelas, mas como ainda não existe tabelas criadas estará vazias. Basta clicar em fechar.
+
+6. Para criar uma nova tabela clique com o botão direito em qualquer  lugar e clique em **Nova Tabela**. Em seguda vamos nomear essa tabela como **Paciente**
+
+![Nova Tabela](./imagens/passo5_novatabela.png)
+
+Nomei para paciente
+
+![Nome Paciente](./imagens/passo6_nomePaciente.png)
+
+7. Defina os nomes dos campos e seus tipos conforme imagem a seguir e que foi baseada no DER.
+
+![Nome colunas](./imagens/passo7_nomeCamposNoDER.png)
+
+Observe que todos os campos são obrigatório, por isso  **Permitir Nulos** está desmarcado para ele. No entanto, para o campo Codigo ele está marcado. Não se preocupe, por que esse campo iremos gerar o código de forma automatica e sequencial. Sendo assim, ele nunca ficará nulo.
+
+
+Atenção
+Importante você salvar as alterações clicando em Salvar ("disquete"). Como é a primeira vez será solicitado o nome que vocÊ quer ofertar ao Diagrama, coloque **DER Clinica**.
+
+![Der Clinica](./imagens/passo8_nomeDiagrama.png)
+
+8. Chave Primária. O campo codigo conforme contexto e DER será nossa chave primária e para garantir sistemáticamente que ele não se repita, clique com o botão direito em cima de **codigo** e em seguida clique em **Definir Chave Primária**
+
+![Der Chave Primária](./imagens/passo8_nomeDiagrama.png)
+
+
+ATENÇÃO
+!Ops. Se depois que você clicar em salvar, aparecer uma janela de alerta...
+
+![Alerta não Salva](./imagens/passo10_alertaNaoSalva.png)
+
+
+ informando que não é possível salvar alterações. Faça as seguintes etapas.
+
+  8.2. Clique em ferramentas, opções. Na janela que for abertar clique na opção **Designers** e desmarque as opções de aviso e confirme. 
+  Clique novamente em salvar e vefique se o projeto foi salvo.
+
+![Opções avisos ](./imagens/passo11_ferramentasOpcoes.png)
+
+Observe que a chave amarela vai esta ao lado de código e o asterisco ao lado do nome Paciente também sumiu confirmando que todas as alterações foram salvas.
+
+![Salvo alterações](./imagens/passo12_salvochave.png)
+
+
+9. Código automático. Para que o código do Paciente seja inserido numeração automática. Você deve clicar com o botão direito em **Codigo** e em seguida, clica em **Propriedade**. Nas opções que abrir na parte direita da tela deixe as opções a seguir marcado com Sim e valor 1
+
+  - Especificação de Identidade = Sim
+    - (É identidade) = Sim
+    - Incremento de Identidade = 1
+    - Semente de Identidade = 1
+
+![Incrementar Código](./imagens/passo13_incrementarCodigo.png)
+
+
+10. Crie a tabela Medico e Consulta seguindo os passos feito para criarmos paciente.
+
+- ATENÇÃO!
+
+A tabela Consulta vai ter o campo PacienteID e MedicoID esses campos são do tipo inteiro e será passado manualmente. Não colocar identação.
+Quanto a forma de vincular esse campo a suas tabelas de origem (PacienteID com Codigo na taela Paciente) será mostrado no próximo passo.
+
+Depois de finalizado o seu digrama deve ficar similar a imagem abaixo:
+
+
+![DER no SQL](./imagens/passo14_DER_no_SQL.png)
+
+11. Integridade Referencia - Chave estrangeira
+
+O fato de você ter criado a tabela consulta com o campo PacienteId e colocar do tipo inteiro, não é o bastante para evitar, por exemplo, que um usuário colque um PacienteID com valor 100 e na tabela Paciente esse código não existir. Já imaginou na hora da consulta informar um código de paciente que não existe na tabela Paciente? Como resolver?
+
+Para resolver isso, vamos informar que o campo PacientID é uma chave estrangeira do campo Codigo na tabela Paciente.
+
+- Passo para ligar Codigo do Paciente a PacientID
+  Clique em cima da chave amarela ao lado do Codigo na tabela Paciente, seguro e arraste e solte em cima do campo PacientID na tabela Consulta.
+
+  Na janela que aparecer confirme que na esquerda (chave primária) está a tabela Paciente e o campo Codigo. Na parte da direita  (chave estrangeira) a tabela Consulta e o campo PacienteID
+
+  ![DER relacao pacienteID](./imagens/passo15_LigarChave.png)
+
+   Faça o mesmo processo para vincular o  Codigo do Médido  na tabela Médico com o campo MedicoID na tabela consulta
+
+
+  ![DER final no SQL](./imagens/passo15_LigarChave.png)
+
+
+  Atenção! Sempre vá salvando as alterações
+
+
+## 🗄️ Etapa 2B: CRIAÇAO DO BANCO DE DADOS COM SCRIPT
+
+
+Se você quiser pode rodar o script a seguir e ele irá criar o banco de dados e as tabelas com seus campos e relacionamento. E ainda, via insert vai inserir alguns dados.
+
 
 ```sql
-CREATE DATABASE dbTasksZero;
+CREATE DATABASE dbClinica;
 GO
-USE dbTasksZero;
+USE dbClinica;
 GO
 
--- Tabela Funcionario
-CREATE TABLE Funcionario (
+-- Tabela Paciente
+CREATE TABLE Paciente (
     Codigo INT IDENTITY(1,1) PRIMARY KEY,
     Nome VARCHAR(100) NOT NULL,
-    Cargo VARCHAR(50) NOT NULL
+    Cpf VARCHAR(14) NOT NULL UNIQUE,
+    Telefone VARCHAR(20) NOT NULL,
+    DataNascimento DATE NOT NULL
 );
 GO
 
--- Tabela Tarefa
-CREATE TABLE Tarefa (
+-- Tabela Medico
+CREATE TABLE Medico (
     Codigo INT IDENTITY(1,1) PRIMARY KEY,
-    Descricao VARCHAR(200) NOT NULL,
-    DataPlanejada DATETIME NOT NULL,
-    DataIniciada DATETIME NULL,
-    DataFinalizada DATETIME NULL,
-    DataCancelada DATETIME NULL,
-    StatusTarefa VARCHAR(30) NOT NULL,
-    Prazo VARCHAR(20) NOT NULL,
-    FuncionarioId INT NOT NULL,
-    CONSTRAINT FK_Tarefa_Funcionario FOREIGN KEY (FuncionarioId) 
-        REFERENCES Funcionario(Codigo)
+    Nome VARCHAR(100) NOT NULL,
+    Crm VARCHAR(20) NOT NULL UNIQUE,
+    Especialidade VARCHAR(50) NOT NULL
+);
+GO
+
+-- Tabela Consulta
+CREATE TABLE Consulta (
+    Codigo INT IDENTITY(1,1) PRIMARY KEY,
+    DataHora DATETIME NOT NULL,
+    StatusConsulta VARCHAR(30) NOT NULL,
+    PacienteId INT NOT NULL,
+    MedicoId INT NOT NULL,
+    CONSTRAINT FK_Consulta_Paciente FOREIGN KEY (PacienteId) 
+        REFERENCES Paciente(Codigo),
+    CONSTRAINT FK_Consulta_Medico FOREIGN KEY (MedicoId) 
+        REFERENCES Medico(Codigo)
 );
 GO
 
 -- Inserindo Dados Iniciais para Teste
-INSERT INTO Funcionario (Nome, Cargo) VALUES 
-('Carlos Silva', 'Desenvolvedor Senior'),
-('Ana Oliveira', 'Analista de QA'),
-('Roberto Santos', 'Gerente de Projetos');
+INSERT INTO Paciente (Nome, Cpf, Telefone, DataNascimento) VALUES 
+('Maria Oliveira', '111.222.333-44', '(11) 98888-7777', '1990-05-15'),
+('João Souza', '555.666.777-88', '(11) 97777-6666', '1985-10-20');
 
-INSERT INTO Tarefa (Descricao, DataPlanejada, DataIniciada, DataFinalizada, DataCancelada, StatusTarefa, Prazo, FuncionarioId) VALUES 
-('Criar tela de Login', '2026-08-10', '2026-08-01', NULL, NULL, 'Em Andamento', 'Em dia', 1),
-('Homologar Release 1.0', '2026-08-05', NULL, NULL, NULL, 'Pendente', 'Em atraso', 2);
+INSERT INTO Medico (Nome, Crm, Especialidade) VALUES 
+('Dra. Helena Rios', 'CRM/SP 123456', 'Cardiologia'),
+('Dr. Roberto Alves', 'CRM/SP 654321', 'Ortopedia');
+
+INSERT INTO Consulta (DataHora, StatusConsulta, PacienteId, MedicoId) VALUES 
+('2026-10-15 14:00:00', 'Agendada', 1, 1),
+('2026-10-16 09:30:00', 'Agendada', 2, 2);
 GO
 ```
 
-## 📁 Etapa 2: Criação do Projeto no Visual Studio
+### 📁 Criação do Projeto no Visual Studio
+
+
+Com nosso Banco de dados prontos, agora é a hora de criarmos o nosso preto no ASP.NET (Visual Studio)
+
+## 📦 Etapa 1: Criando O projeto
 
 - Abre o Visual Studio.
 
@@ -124,7 +233,7 @@ GO
 - Selecione o Framework .NET 7.0 (Suporte Técnico Padrão) e clique em Criar.
 
 
-## 📦 Etapa 3: Instalação dos Pacotes do Entity Framework
+## 📦 Etapa 2: Instalação dos Pacotes do Entity Framework
 
 - Microsoft.EntityFrameworkCore.SqlServer
 
@@ -133,7 +242,7 @@ GO
 - Microsoft.VisualStudio.Web.CodeGeneration.Design
 
 
-## ⚙️ Etapa 4: Configuração da String de Conexão no appsettings.json
+## ⚙️ Etapa 3: Configuração da String de Conexão no appsettings.json
 
 Abra o arquivo appsettings.json na raiz do projeto e configure a propriedade ConnectionStrings.
 
@@ -147,7 +256,7 @@ Abra o arquivo appsettings.json na raiz do projeto e configure a propriedade Con
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "ConexaoSqlServer": "Server=.\\SENAI; Database=dbTasksZero; User Id=sa; Password=senai.123; TrustServerCertificate=True;"
+    "ConexaoSqlServer": "Server=.\\SENAI; Database=dbClinica; User Id=sa; Password=senai.123; TrustServerCertificate=True;"
   }
 }
 ```
@@ -156,13 +265,13 @@ Exemplo com Autenticação do Windows (Trusted Connection)
 
 ```json
 "ConnectionStrings": {
-  "ConexaoSqlServer": "Server=localhost; Database=dbTasks; Trusted_Connection=True; TrustServerCertificate=True;"
+  "ConexaoSqlServer": "Server=localhost; Database=dbClinica; Trusted_Connection=True; TrustServerCertificate=True;"
 }
 ```
 
 
 
-## 🔨 Etapa 5: Engenharia Reversa - scaffolding update database
+## 🔨 Etapa 4: Engenharia Reversa - scaffolding update database
 Use esse comando para adicionar novas tabelas, se seu projeto já contém a classe context configurada
 no Console de pacote
 
@@ -171,13 +280,13 @@ Scaffold-DbContext "Name=ConexaoSqlServer" Microsoft.EntityFrameworkCore.SqlServ
 ```
 
 
-## 🔨 Etapa 6: Compilação Obrigatória da Solução
+## 🔨 Etapa 5: Compilação Obrigatória da Solução
 Antes de gerar as telas e controllers, o projeto precisa estar limpo e compilado:
 
 - Pressione Ctrl + Shift + B ou clique com o botão direito na Solução e selecione Recompilar (Rebuild).
 
 
-## Etapa 7: Registro do DbContext na Injeção de Dependência (Program.cs)
+## Etapa 6: Registro do DbContext na Injeção de Dependência (Program.cs)
 
 Para que o gerador de código consiga instanciar o banco sem erros de tempo de execução ou na geração do Scaffolding, registre o contexto no contêiner de dependências do .NET.
 
@@ -201,14 +310,14 @@ var app = builder.Build();
 
 
 
-## 🎨 Etapa 8: Gerando o CRUD Automático (Scaffolding MVC)
+## 🎨 Etapa 7: Gerando o CRUD Automático (Scaffolding MVC)
 
 Agora vamos criar os **Controllers** e **Views Razor** sem digitar nenhuma linha de código manual:
 
 1. No **Gerenciador de Soluções**, clique com o botão direito na pasta `Controllers` > **Adicionar** > **Item do Scaffolding...** (ou *New Scaffolded Item...*).
 2. Selecione a opção **Controlador MVC com exibições, usando o Entity Framework** e clique em **Adicionar**.
 3. Na janela de configuração:
-   - **Classe de modelo:** Selecione `Funcionario (appReversotask.Models)`.
+   - **Classe de modelo:** Selecione `Paciente (appReversotask.Models)`.
    - **Classe do contexto de dados:** Selecione `dbTasksContext (appReversotask.Models)`.
    - **Exibições:** Certifique-se de que a opção de gerar views esteja marcada.
 4. Clique em **Adicionar**.
