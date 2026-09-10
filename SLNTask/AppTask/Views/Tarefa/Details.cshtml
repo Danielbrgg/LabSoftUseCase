@@ -1,66 +1,8 @@
-﻿@model AppTask.Models.Tarefa
+@model AppTask.Models.Tarefa
 
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Tarefa</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataPlanejada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataPlanejada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataIniciada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataIniciada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataFinalizada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataFinalizada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataCancelada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataCancelada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusTarefa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusTarefa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prazo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prazo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Funcionario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Funcionario.Codigo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@{ ViewData["Title"] = "Detalhes da tarefa"; }
+<div class="mb-4"><h1 class="fw-bold">Detalhes da tarefa</h1><p class="text-secondary">Confira todas as informações da tarefa.</p></div>
+<div class="card shadow-sm border-0"><div class="card-body p-4">
+<dl class="row mb-4"><dt class="col-sm-4 text-secondary">Código</dt><dd class="col-sm-8">@Model.Codigo</dd><dt class="col-sm-4 text-secondary">Descrição</dt><dd class="col-sm-8 fw-semibold">@Model.Descricao</dd><dt class="col-sm-4 text-secondary">Data planejada</dt><dd class="col-sm-8">@Model.DataPlanejada.ToString("dd/MM/yyyy HH:mm")</dd><dt class="col-sm-4 text-secondary">Data iniciada</dt><dd class="col-sm-8">@(Model.DataIniciada?.ToString("dd/MM/yyyy HH:mm") ?? "Não informada")</dd><dt class="col-sm-4 text-secondary">Data finalizada</dt><dd class="col-sm-8">@(Model.DataFinalizada?.ToString("dd/MM/yyyy HH:mm") ?? "Não informada")</dd><dt class="col-sm-4 text-secondary">Data cancelada</dt><dd class="col-sm-8">@(Model.DataCancelada?.ToString("dd/MM/yyyy HH:mm") ?? "Não informada")</dd><dt class="col-sm-4 text-secondary">Status</dt><dd class="col-sm-8"><span class="badge bg-primary">@Model.StatusTarefa</span></dd><dt class="col-sm-4 text-secondary">Prazo</dt><dd class="col-sm-8">@Model.Prazo</dd><dt class="col-sm-4 text-secondary">Responsável</dt><dd class="col-sm-8">@(Model.Funcionario?.Nome ?? "Não informado")</dd></dl>
+<a asp-action="Edit" asp-route-id="@Model.Codigo" class="btn btn-primary">Editar</a><a asp-action="Index" class="btn btn-outline-secondary ms-2">Voltar</a>
+</div></div>

@@ -1,42 +1,8 @@
-﻿@model AppTask.Models.Incidente
+@model AppTask.Models.Incidente
 
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>Incidente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DescricaoProblema)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DescricaoProblema)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataIncidente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataIncidente)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Solucao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Solucao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Resolvido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Resolvido)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+@{ ViewData["Title"] = "Detalhes do incidente"; }
+<div class="mb-4"><h1 class="fw-bold">Detalhes do incidente</h1><p class="text-secondary">Confira as informações registradas.</p></div>
+<div class="card shadow-sm border-0"><div class="card-body p-4">
+<dl class="row mb-4"><dt class="col-sm-4 text-secondary">Código</dt><dd class="col-sm-8">@Model.Codigo</dd><dt class="col-sm-4 text-secondary">Problema</dt><dd class="col-sm-8 fw-semibold">@Model.DescricaoProblema</dd><dt class="col-sm-4 text-secondary">Data</dt><dd class="col-sm-8">@Model.DataIncidente.ToString("dd/MM/yyyy HH:mm")</dd><dt class="col-sm-4 text-secondary">Solução</dt><dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Solucao) ? "Ainda não informado" : Model.Solucao)</dd><dt class="col-sm-4 text-secondary">Status</dt><dd class="col-sm-8">@Model.Resolvido</dd></dl>
+<a asp-action="Edit" asp-route-id="@Model.Codigo" class="btn btn-primary">Editar</a><a asp-action="Index" class="btn btn-outline-secondary ms-2">Voltar</a>
+</div></div>

@@ -1,49 +1,13 @@
-﻿@model AppTask.Models.Incidente
+@model AppTask.Models.Incidente
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>Edit</h1>
-
-<h4>Incidente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Codigo" />
-            <div class="form-group">
-                <label asp-for="DescricaoProblema" class="control-label"></label>
-                <input asp-for="DescricaoProblema" class="form-control" />
-                <span asp-validation-for="DescricaoProblema" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataIncidente" class="control-label"></label>
-                <input asp-for="DataIncidente" class="form-control" />
-                <span asp-validation-for="DataIncidente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Solucao" class="control-label"></label>
-                <input asp-for="Solucao" class="form-control" />
-                <span asp-validation-for="Solucao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Resolvido" class="control-label"></label>
-                <input asp-for="Resolvido" class="form-control" />
-                <span asp-validation-for="Resolvido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@{ ViewData["Title"] = "Editar incidente"; }
+<div class="mb-4"><h1 class="fw-bold">Editar incidente</h1><p class="text-secondary">Atualize as informações do incidente.</p></div>
+<div class="card shadow-sm border-0"><div class="card-body p-4"><form asp-action="Edit" method="post">
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div><input type="hidden" asp-for="Codigo" />
+<div class="mb-3"><label asp-for="DescricaoProblema" class="form-label fw-semibold">Descrição do problema</label><textarea asp-for="DescricaoProblema" class="form-control" rows="3"></textarea><span asp-validation-for="DescricaoProblema" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="DataIncidente" class="form-label fw-semibold">Data do incidente</label><input asp-for="DataIncidente" type="datetime-local" class="form-control" /><span asp-validation-for="DataIncidente" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="Solucao" class="form-label fw-semibold">Solução</label><textarea asp-for="Solucao" class="form-control" rows="3"></textarea><span asp-validation-for="Solucao" class="text-danger"></span></div>
+<div class="mb-4"><label asp-for="Resolvido" class="form-label fw-semibold">Resolvido</label><select asp-for="Resolvido" class="form-select"><option value="Sim">Sim</option><option value="Não">Não</option></select><span asp-validation-for="Resolvido" class="text-danger"></span></div>
+<button type="submit" class="btn btn-primary">Salvar alterações</button><a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+</form></div></div>
+@section Scripts { @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }

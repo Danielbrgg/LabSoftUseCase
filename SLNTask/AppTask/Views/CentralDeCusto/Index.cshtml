@@ -1,41 +1,41 @@
-﻿@model IEnumerable<AppTask.Models.CentralDeCusto>
+@model IEnumerable<AppTask.Models.CentralDeCusto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Centrais de custo";
 }
 
-<h1>Central de Custos</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Centrais de custo</h1>
+        <p class="text-secondary mb-0">Gerencie as metas anuais das centrais cadastradas.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">+ Nova central</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeCentral)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ValorMetaAnual)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeCentral)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ValorMetaAnual)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Codigo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Codigo">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Central</th>
+                    <th>Meta anual</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.NomeCentral</td>
+                        <td>@(item.ValorMetaAnual.HasValue ? item.ValorMetaAnual.Value.ToString("C2", new System.Globalization.CultureInfo("pt-BR")) : "Não definida")</td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                            <a asp-action="Edit" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
