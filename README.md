@@ -149,7 +149,7 @@ Para resolver isso, vamos informar que o campo PacientID é uma chave estrangeir
    Faça o mesmo processo para vincular o  Codigo do Médido  na tabela Médico com o campo MedicoID na tabela consulta
 
 
-  ![DER final no SQL](./imagens/passo15_LigarChave.png)
+  ![DER final no SQL](./imagens/passo16_DER_FinalNOSQL.png)
 
 
   Atenção! Sempre vá salvando as alterações
@@ -219,6 +219,7 @@ GO
 
 
 Com nosso Banco de dados prontos, agora é a hora de criarmos o nosso preto no ASP.NET (Visual Studio)
+
 
 ## 📦 Etapa 1: Criando O projeto ASP.NET
 
