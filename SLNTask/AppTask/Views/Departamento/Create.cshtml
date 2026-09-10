@@ -4,13 +4,36 @@
     ViewData["Title"] = "Novo departamento";
 }
 
-<div class="mb-4"><h1 class="fw-bold">Novo departamento</h1><p class="text-secondary">Cadastre um departamento.</p></div>
-<div class="card shadow-sm border-0"><div class="card-body p-4">
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-    <div class="mb-3"><label asp-for="Descricao" class="form-label fw-semibold">Descrição</label><input asp-for="Descricao" class="form-control" placeholder="Nome do departamento" /><span asp-validation-for="Descricao" class="text-danger"></span></div>
-    <div class="form-check mb-4"><input asp-for="Ativo" class="form-check-input" /><label asp-for="Ativo" class="form-check-label">Departamento ativo</label></div>
-    <button type="submit" class="btn btn-primary">Cadastrar</button><a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
-</form>
-</div></div>
-@section Scripts { @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }
+<div class="mb-4">
+    <h1 class="fw-bold">Novo departamento</h1>
+    <p class="text-secondary">Cadastre um novo departamento no sistema.</p>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label asp-for="Descricao" class="form-label fw-semibold">Descrição</label>
+                <input asp-for="Descricao" class="form-control" placeholder="Nome do departamento" />
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Ativo" class="form-label fw-semibold">Status do departamento</label>
+                <select asp-for="Ativo" class="form-select">
+                    <option value="">-- Selecione o status --</option>
+                    <option value="true">Ativo</option>
+                    <option value="false">Inativo</option>
+                </select>
+                <span asp-validation-for="Ativo" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
