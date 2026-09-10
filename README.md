@@ -215,6 +215,56 @@ INSERT INTO Consulta (DataHora, StatusConsulta, PacienteId, MedicoId) VALUES
 GO
 ```
 
+### 📁 Importação de dados via Arquivo
+
+Se você quiser, você pode importar os dados de 5 pacientes diretamente do arquivo **pacientes.csv** disponibilizado.
+
+Siga os passos a seguir
+
+1. Clique com o botão direito do mouse em seu banco de dados, depois escolha Tarefa e em seguidda Importar Dados.
+![Importar opção](./imagens/passoImportar_01_tarefaImportar.png)
+
+2. Clique em avançar e na tela seguinte escolha:
+  - Fonte de dados: Flat File Source
+  - Nome do arquivo: clique em procurar, localize o arquivo **pacienres.csv** (se nao exibir mesmo estando na pasta, coloque a opção como todos os arquivos ao lado do nome)
+  - clique em próximo
+  
+![Importar defnir opções ](./imagens/passoImportar_02_arquivo.png)
+
+3. Verifique se os dados estão organizados, o delimitado nesse caso é vírgula.
+
+![Dados a importar](./imagens/passoImportar_03_dadosok.png)
+
+4. Destino
+   - escolha **Microsoft OLE DB Provider for SQL Server**
+   - nome do servidor: **.\SENAI**
+   - marque a opção: **Usar autenticação do SQL Server**
+   - usuário: **sa** ou seu usuário
+   - senha: **coloque a senha do seu sql**
+   - banco de dados: **dbClinica**
+
+![Destino dados](./imagens/passoImportar_04_destino.png)
+
+Ele já vai sugerir a tabela paciente, você pode alterar se desejar, ou caso não esteja correto.
+
+![Destino tabela](./imagens/passoImportar_05_destinotabela.png)
+
+Pode ir avançando e confirmar.
+
+Estando tudo certo se você usar o comando na consutla sql
+
+```sql
+select * from paciente
+```
+
+Irá retornar os pacientes.
+
+![select ](./imagens/passoImportar_06_tabelapacienes.png)
+
+
+
+
+
 ### 📁 Criação do Projeto no Visual Studio
 
 
