@@ -58,16 +58,21 @@ public partial class DbTasksZeroContext : DbContext
         modelBuilder.Entity<Funcionario>(entity =>
         {
             entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD275532BF");
-
             entity.ToTable("Funcionario");
 
             entity.Property(e => e.Cargo)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .IsUnicode(false);
 
+            entity.HasOne(e => e.Gerente)
+                .WithMany()
+                .HasForeignKey(e => e.IdGerente)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_Funcionario_Gerente");
         });
 
         modelBuilder.Entity<Incidente>(entity =>

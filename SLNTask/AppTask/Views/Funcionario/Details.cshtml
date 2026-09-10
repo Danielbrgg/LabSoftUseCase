@@ -1,8 +1,89 @@
 @model AppTask.Models.Funcionario
 
-@{ ViewData["Title"] = "Detalhes do funcionário"; }
-<div class="mb-4"><h1 class="fw-bold">Detalhes do funcionário</h1><p class="text-secondary">Informações cadastradas.</p></div>
-<div class="card shadow-sm border-0"><div class="card-body p-4">
-<dl class="row mb-4"><dt class="col-sm-4 text-secondary">Código</dt><dd class="col-sm-8">@Model.Codigo</dd><dt class="col-sm-4 text-secondary">Nome</dt><dd class="col-sm-8 fw-semibold">@Model.Nome</dd><dt class="col-sm-4 text-secondary">Cargo</dt><dd class="col-sm-8">@Model.Cargo</dd></dl>
-<a asp-action="Edit" asp-route-id="@Model.Codigo" class="btn btn-primary">Editar</a><a asp-action="Index" class="btn btn-outline-secondary ms-2">Voltar</a>
-</div></div>
+@{
+    ViewData["Title"] = "Detalhes do funcionário";
+}
+
+<div class="mb-4">
+    <h1 class="fw-bold">Detalhes do funcionário</h1>
+    <p class="text-secondary">Visualize as informações do funcionário.</p>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+
+        <dl class="row mb-4">
+
+            <dt class="col-sm-3">
+                ID
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Codigo
+            </dd>
+
+            <dt class="col-sm-3">
+                Nome
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Nome
+            </dd>
+
+            <dt class="col-sm-3">
+                Cargo
+            </dt>
+
+            <dd class="col-sm-9">
+                @Model.Cargo
+            </dd>
+
+            <dt class="col-sm-3">
+                ID do gerente
+            </dt>
+
+            <dd class="col-sm-9">
+                @if (Model.IdGerente.HasValue)
+                {
+                    @Model.IdGerente
+                }
+                else
+                {
+                    <span class="text-secondary">
+                        —
+                    </span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">
+                Gerente
+            </dt>
+
+            <dd class="col-sm-9">
+                @if (Model.Gerente != null)
+                {
+                    @Model.Gerente.Nome
+                }
+                else
+                {
+                    <span class="text-secondary">
+                        Nenhum gerente
+                    </span>
+                }
+            </dd>
+
+        </dl>
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.Codigo"
+           class="btn btn-primary">
+            Editar
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary ms-2">
+            Voltar
+        </a>
+
+    </div>
+</div>

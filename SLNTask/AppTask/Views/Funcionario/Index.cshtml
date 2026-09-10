@@ -6,36 +6,85 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="fw-bold mb-1">Funcionários</h1>
-        <p class="text-secondary mb-0">Gerencie os funcionários cadastrados no sistema.</p>
+        <h1 class="fw-bold">Funcionários</h1>
+        <p class="text-secondary mb-0">
+            Gerencie os funcionários cadastrados no sistema.
+        </p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">+ Novo funcionário</a>
+
+    <a asp-action="Create" class="btn btn-primary">
+        Novo funcionário
+    </a>
 </div>
 
 <div class="card shadow-sm border-0">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>Nome</th>
-                    <th>Cargo</th>
-                    <th class="text-end">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
                     <tr>
-                        <td class="fw-semibold">@item.Nome</td>
-                        <td><span class="badge bg-light text-dark border">@item.Cargo</span></td>
-                        <td class="text-end">
-                            <a asp-action="Details" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-secondary">Detalhes</a>
-                            <a asp-action="Edit" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-primary">Editar</a>
-                            <a asp-action="Delete" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-danger">Excluir</a>
-                        </td>
+                        <th>Id</th>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Gerente</th>
+                        <th class="text-end">Ações</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    @foreach (var funcionario in Model)
+                    {
+                        <tr>
+                            <td>@funcionario.Codigo</td>
+
+                            <td>
+                                @funcionario.Nome
+                            </td>
+
+                            <td>
+                                @funcionario.Cargo
+                            </td>
+
+                            <td>
+                                @if (funcionario.Gerente != null)
+                                {
+                                    @funcionario.Gerente.Nome
+                                }
+                                else
+                                {
+                                    <span class="text-secondary">
+                                        —
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <a asp-action="Edit"
+                                   asp-route-id="@funcionario.Codigo"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Editar
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@funcionario.Codigo"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    Detalhes
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@funcionario.Codigo"
+                                   class="btn btn-sm btn-outline-danger">
+                                    Excluir
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+
     </div>
 </div>

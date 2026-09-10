@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AppTask.Models;
 
@@ -20,7 +21,11 @@ namespace AppTask.Controllers
         // GET: Funcionario
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Funcionarios.ToListAsync());
+            var funcionarios = await _context.Funcionarios
+                .Include(f => f.Gerente)
+                .ToListAsync();
+
+            return View(funcionarios);
         }
 
         // GET: Funcionario/Details/5
@@ -32,6 +37,7 @@ namespace AppTask.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.Gerente)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
 
             if (funcionario == null)
@@ -45,6 +51,12 @@ namespace AppTask.Controllers
         // GET: Funcionario/Create
         public IActionResult Create()
         {
+            ViewData["IdGerente"] = new SelectList(
+                _context.Funcionarios,
+                "Codigo",
+                "Nome"
+            );
+
             return View();
         }
 
@@ -52,7 +64,7 @@ namespace AppTask.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+            [Bind("Codigo,Nome,Cargo,IdGerente")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -60,6 +72,13 @@ namespace AppTask.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["IdGerente"] = new SelectList(
+                _context.Funcionarios,
+                "Codigo",
+                "Nome",
+                funcionario.IdGerente
+            );
 
             return View(funcionario);
         }
@@ -79,6 +98,14 @@ namespace AppTask.Controllers
                 return NotFound();
             }
 
+            ViewData["IdGerente"] = new SelectList(
+                _context.Funcionarios
+                    .Where(f => f.Codigo != funcionario.Codigo),
+                "Codigo",
+                "Nome",
+                funcionario.IdGerente
+            );
+
             return View(funcionario);
         }
 
@@ -87,11 +114,19 @@ namespace AppTask.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+            [Bind("Codigo,Nome,Cargo,IdGerente")] Funcionario funcionario)
         {
             if (id != funcionario.Codigo)
             {
                 return NotFound();
+            }
+
+            if (funcionario.IdGerente == funcionario.Codigo)
+            {
+                ModelState.AddModelError(
+                    "IdGerente",
+                    "Um funcionário não pode ser seu próprio gerente."
+                );
             }
 
             if (ModelState.IsValid)
@@ -116,6 +151,14 @@ namespace AppTask.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            ViewData["IdGerente"] = new SelectList(
+                _context.Funcionarios
+                    .Where(f => f.Codigo != funcionario.Codigo),
+                "Codigo",
+                "Nome",
+                funcionario.IdGerente
+            );
+
             return View(funcionario);
         }
 
@@ -128,6 +171,7 @@ namespace AppTask.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.Gerente)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
 
             if (funcionario == null)

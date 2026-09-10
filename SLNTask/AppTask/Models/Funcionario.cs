@@ -11,5 +11,9 @@ public partial class Funcionario
 
     public string Cargo { get; set; } = null!;
 
+    public int? IdGerente { get; set; }
+
+    public virtual Funcionario? Gerente { get; set; }
+
     public virtual ICollection<Tarefa> Tarefas { get; set; } = new List<Tarefa>();
 }
