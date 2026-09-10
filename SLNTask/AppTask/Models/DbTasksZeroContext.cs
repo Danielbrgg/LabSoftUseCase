@@ -68,9 +68,6 @@ public partial class DbTasksZeroContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
 
-            entity.HasOne(d => d.CodigoGerenteNavigation).WithMany(p => p.InverseCodigoGerenteNavigation)
-                .HasForeignKey(d => d.CodigoGerente)
-                .HasConstraintName("FK__Funcionar__Codig__29572725");
         });
 
         modelBuilder.Entity<Incidente>(entity =>

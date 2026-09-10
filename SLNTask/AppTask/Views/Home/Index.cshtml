@@ -1,8 +1,48 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Início";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="py-5">
+    <div class="p-5 mb-4 bg-light rounded-4 shadow-sm border">
+        <div class="container-fluid py-3">
+            <span class="badge bg-primary mb-3">AppTask</span>
+            <h1 class="display-5 fw-bold">Bem-vindo ao AppTask</h1>
+            <p class="col-md-8 fs-5 text-secondary">
+                Gerencie tarefas, funcionários, departamentos, centrais de custo e incidentes em um só lugar.
+            </p>
+            <a asp-controller="Tarefa" asp-action="Index" class="btn btn-primary btn-lg">
+                Ver tarefas
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="h4">Tarefas</h2>
+                    <p class="text-secondary">Crie, acompanhe e organize as tarefas da equipe.</p>
+                    <a asp-controller="Tarefa" asp-action="Index" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="h4">Funcionários</h2>
+                    <p class="text-secondary">Consulte e gerencie os funcionários cadastrados.</p>
+                    <a asp-controller="Funcionario" asp-action="Index" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="h4">Incidentes</h2>
+                    <p class="text-secondary">Registre problemas e acompanhe suas soluções.</p>
+                    <a asp-controller="Incidente" asp-action="Index" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

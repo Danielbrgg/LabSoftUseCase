@@ -1,77 +1,53 @@
-﻿@model IEnumerable<AppTask.Models.Tarefa>
+@model IEnumerable<AppTask.Models.Tarefa>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tarefas";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Tarefas</h1>
+        <p class="text-secondary mb-0">Acompanhe as tarefas e seus responsáveis.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">+ Nova tarefa</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataPlanejada)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataIniciada)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataFinalizada)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataCancelada)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StatusTarefa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Prazo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Funcionario)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataPlanejada)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataIniciada)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataFinalizada)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataCancelada)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StatusTarefa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Prazo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Funcionario.Codigo)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Codigo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Codigo">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Descrição</th>
+                    <th>Planejada</th>
+                    <th>Iniciada</th>
+                    <th>Finalizada</th>
+                    <th>Cancelada</th>
+                    <th>Status</th>
+                    <th>Prazo</th>
+                    <th>Responsável</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.Descricao</td>
+                        <td>@item.DataPlanejada.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(item.DataIniciada?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                        <td>@(item.DataFinalizada?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                        <td>@(item.DataCancelada?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                        <td><span class="badge bg-primary">@item.StatusTarefa</span></td>
+                        <td>@item.Prazo</td>
+                        <td>@(item.Funcionario?.Nome ?? "Não informado")</td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Details" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                            <a asp-action="Edit" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
