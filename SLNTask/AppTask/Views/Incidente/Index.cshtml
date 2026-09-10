@@ -1,53 +1,54 @@
-﻿@model IEnumerable<AppTask.Models.Incidente>
+@model IEnumerable<AppTask.Models.Incidente>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Incidentes";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Incidentes</h1>
+        <p class="text-secondary mb-0">Registre problemas e acompanhe suas soluções.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">+ Novo incidente</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DescricaoProblema)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataIncidente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Solucao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Resolvido)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DescricaoProblema)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataIncidente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Solucao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Resolvido)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Codigo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Codigo">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Problema</th>
+                    <th>Data</th>
+                    <th>Solução</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.DescricaoProblema</td>
+                        <td>@item.DataIncidente.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@(string.IsNullOrWhiteSpace(item.Solucao) ? "Ainda não solucionado" : item.Solucao)</td>
+                        <td>
+                            @if (string.Equals(item.Resolvido, "Sim", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="badge bg-success">Resolvido</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-action="Details" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                            <a asp-action="Edit" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <a asp-action="Delete" asp-route-id="@item.Codigo" class="btn btn-sm btn-outline-danger">Excluir</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
