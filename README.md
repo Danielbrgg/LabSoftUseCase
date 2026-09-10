@@ -1,14 +1,14 @@
-# 🚀 Guia Prático: Construindo um Projeto ASP.NET Core MVC (.NET 9) a partir do Banco de Dados (Database First sem Linha de Comando)
+# 🚀 Guia Prático: SISTEMA CLINICA MÉDIA - AGENDAMENTO CONSULTA
 
-## 📌 Contextualização e Objetivo
-No desenvolvimento de software corporativo, é extremamente comum nos depararmos com cenários onde o banco de dados já está modelado e criado no **SQL Server**. Antigamente, no .NET Framework 4.x, utilizávamos o recurso gráfico do *Entity Data Model (.edmx)* para gerar as classes a partir do banco de dados existente.
-
-Com o advento do **.NET Core / .NET 9**, o **Entity Framework Core (EF Core)** evoluiu e abandonou os arquivos `.edmx`. No entanto, **não é necessário digitar diversos comandos no terminal** para automatizar esse fluxo.
-
-Este tutorial guia o aluno, passo a passo, na criação de uma aplicação **ASP.NET Core MVC do zero**, realizando a **Engenharia Reversa (Reverse Engineering)** do banco de dados via interface visual do Visual Studio, configurando as dependências e gerando o **CRUD automático (Scaffolding)** das telas.
+## 📌 Contexto do Projeto: Sistema de Gestão da Clínica Médica "Vida & Saúde"
 
 
-![Texto Alternativo da Imagem](/imagens/fluxo_asp_net.png)
+A clínica médica "Vida & Saúde" precisa informatizar o atendimento de consultas para melhorar a organização da agenda diária. Atualmente, os pacientes ligam ou vão presencialmente à recepção para marcar horários com médicos de diversas especialidades.
+
+No sistema, um Paciente cadastra seus dados pessoais (Nome, CPF, Telefone e Data de Nascimento). O Médico possui seu cadastro contendo Nome, CRM e Especialidade. Uma Consulta representa o agendamento em si, onde é registrado o Paciente, o Médico responsável, a Data/Hora agendada e o Status do atendimento (Ex: Agendada, Realizada, Cancelada).
+
+O paciente só consegue fazer agendamento  se estiver logado.  Ao abrir o sistema a primeira tela é a de login, que deve conter abaixo também uma opção para a pessoa fazer o cadastro, caso ainda não tenha.
+
 
 ---
 
@@ -16,11 +16,58 @@ Este tutorial guia o aluno, passo a passo, na criação de uma aplicação **ASP
 - Visual Studio 2022 (com suporte ao .NET 9 instado)
 - Microsoft SQL Server e SQL Server Management Studio (SSMS)
 
-
 ---
 
-## 🗄️ Etapa 1: Preparação e Criação do Banco de Dados
-Abra o **SQL Server Management Studio (SSMS)**, crie o banco de dados e execute o script SQL abaixo para estruturar o ambiente de testes.
+## 🗄️ Etapa 1: levantamento de Requisitos Funcionais
+
+Os requisitos funcionais estão atrelada ao negócio do usuário. Um exemplo, usuário só pode fazer agendmaento se estiver logado. Cada paciente só pode fazer um agendamento naquele dia.
+
+os requisitos funcionais são diferente dos requisitos não funcionais, pois os não funcionais refere-se, por exemplo, a definição de qual banco de dados usar, ou linguagem de programação.
+
+Então, com base em nosso contexto podemos definir a list a seguir como nossa lista inicial de requisitos funcionais.
+
+| ID | Requisito | Descrição |
+| :--- | :--- | :--- |
+| **R1** | Cadastro de Pacientes | O sistema deve permitir cadastrar, visualizar, atualizar e excluir (CRUD) os dados dos pacientes. |
+| **R2** | Cadastro de Médicos | O sistema deve permitir cadastrar, visualizar, atualizar e excluir (CRUD) os dados dos médicos (incluindo CRM e Especialidade). |
+| **R3** | Agendamento de Consulta | O sistema deve permitir agendar consultas vinculando obrigatoriamente 1 Paciente e 1 Médico a uma data/hora específica. |
+| **R4** | Controle de Status | Toda consulta deve iniciar com o status "Agendada", permitindo alteração para "Realizada" ou "Cancelada". |
+| **R5** | Integridade Relacional | Não deve ser possível excluir um paciente ou médico que já possua consultas vinculadas no histórico. |
+
+
+## 🗄️ Etapa 2: DER - DIGRAMA DE ENTIDADE E RELACIONAMENTO
+
+Com base no contexto  e requisitos podemos considerar a  imagem a seguir (DER) como ponto de partida para implementar nosso sistema.
+
+  ![DER](./imagens/der_clinica.png)
+
+ATENÇÃO
+No mercado do trabalho o imporante é focar no pedido solicitado. Se um gestor pede para implementar o DER acima, foque nessa entrega. Não é interessante criar outras tabelas e campos sem antes alinhar com a sua supervisão.
+
+
+## 🗄️ Etapa 3: CRIA O BANCO DE DADOS NO SQL SERVER
+
+Para crair o banco de dados você pode fazer via Script, ou via interface do SQL Server Management.
+
+Vamos fazer usando a proposta de intereface (cliques, tela).
+
+1. Abra o **SQL Server Management** e coloque as credencias de login e senha
+2. Ao lado esquerdo para criar o banco de dados clique com o botão direito em Banco de Dados e em seguida **Novo Banco de Dados**
+
+![Criando banco](./imagens/passo1_criarBanco.png)
+
+3. Defina o nome do banco de dados para **dbClinica** e depois confirme clicando em **ok**
+
+![Nome banco](./imagens/passo2_nomeBanco.png)
+
+4. Para verificar se o banco foi criado, expanda a visualização de banco clicando no sinal de + de banco de dados a esquerda e se ainda não apareceu clique no botão atualizar (azul)
+
+![Nome banco](./imagens/passo3_visualizarBanco.png)
+
+5. Para criar as tabelas vamos usar a opção visual **Criar Diagrama de Banco de Dados**. Clique com o botão direito nessa opção estando na visualiação do banco **dbClinica** e em seguida clique em **Novo Diagrama de Banco de Dados**
+
+![Criando diagrama](./imagens/passo4_criandoDiagrama.png)
+
 
 ```sql
 CREATE DATABASE dbTasksZero;
