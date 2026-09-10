@@ -375,6 +375,426 @@ Basta pressionar F5 para executar a aplicação e navegar até /Paciente para vi
 
 Repita o mesmo processo para Medico e Consulta
 
+## 🔒 Implementando Autenticação Simples com Session
+
+Para nível de treinamento vamos criar uma estrutura de autenticação login, usando sessões.
+
+### 1. Criando a View Model de Login
+
+Dentro da pasta `Models`, crie uma nova classe chamada `LoginViewModel.cs`. Ela servirá para capturar os dados do formulário de login.
+
+```csharp
+using System.ComponentModel.DataAnnotations;
+
+namespace appReverso.Models
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "O CPF é obrigatório.")]
+        [Display(Name = "CPF do Paciente")]
+        public string Cpf { get; set; } = string.Empty;
+    }
+}
+
+### 2. Criar Controller de Login
+
+Clique com o botão direito na pasta Controllers > Adicionar > Controlador... > Escolha Controlador MVC - Vazio e nomeie como AccountController.cs.
+
+Adicione o código abaixo para gerenciar o Login e o Logout do paciente:
+
+```csharp
+using appReverso.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
+namespace appReverso.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly DbClinicaContext _context;
+
+        public AccountController(DbClinicaContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public IActionResult Login() => View();
+
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var paciente = await _context.Pacientes
+                .FirstOrDefaultAsync(p => p.Cpf == model.Cpf);
+
+            if (paciente == null)
+            {
+                ModelState.AddModelError("", "CPF não encontrado.");
+                return View(model);
+            }
+
+            // Salva na Session
+            HttpContext.Session.SetInt32("PacienteId", paciente.Codigo);
+            HttpContext.Session.SetString("PacienteNome", paciente.Nome);
+
+            return RedirectToAction("Index", "Consulta");
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Limpa a sessão
+            return RedirectToAction("Login");
+        }
+
+    }
+}
+
+A proposta aqui é que toda vez que o Login for válido, o CPF ele adicionar uma sessão no navegaor e salva o código e nome do paciente.
+
+```
+### 3. Criar a ViewLogin
+
+  1. Dentro da pasta Views, crie uma nova pasta chamada Account.
+  2. Dentro de Views/Account, crie um arquivo Razor View chamado Login.cshtml com o seguinte conteúdo:
+
+```html
+@model appReverso.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="col-md-4 mx-auto mt-4">
+    <h3 class="text-center">Acesso do Paciente</h3>
+
+    <form asp-action="Login" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Cpf" class="form-label"></label>
+            <input asp-for="Cpf" class="form-control" placeholder="111.222.333-44" />
+            <span asp-validation-for="Cpf" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mb-2">Entrar</button>
+    </form>
+
+    <div class="text-center">
+        <a asp-controller="Paciente" asp-action="Create">Criar cadastro</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+```
+
+### 4. Ative a Session no  programa.cs
+
+```csharp
+// 1. Adicionar o serviço de Session (antes do var app = builder.Build())
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+
+
+var app = builder.Build();
+
+// 2. Ativar o Middleware de Session (depois do app.UseRouting())
+app.UseRouting();
+app.UseSession(); 
+app.UseAuthorization();
+
+```
+
+### 5. Incluindo segurança em Consulta
+
+Abra a ConsultaController.cs
+
+Na Index (ou no formulário de agendamento), você faz a verificação direta na Session, exemplo:
+
+```csharp
+public async Task<IActionResult> Index()
+{
+    // Verifica se a sessão existe
+    var pacienteId = HttpContext.Session.GetInt32("PacienteId");
+
+    if (pacienteId == null)
+    {
+        // Se não estiver logado, redireciona para a tela de login
+        return RedirectToAction("Login", "Account");
+    }
+
+    // Código normal da Index...
+    var consultas = await _context.Consultas
+        .Include(c => c.Medico)
+        .Include(c => c.Paciente)
+        .Where(c => c.PacienteId == pacienteId) // Mostra apenas as consultas do paciente logado!
+        .ToListAsync();
+
+    return View(consultas);
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+## 🔒 (Opcional) Implementando Autenticação com Cookies e Autorize no ASP.NET (O ideial)
+
+Para atender ao requisito de negócio onde **o paciente só pode agendar consultas se estiver autenticado**, vamos criar um fluxo de login simplificado utilizando **Cookie Authentication** nativo do ASP.NET Core, onde o paciente se autentica informando apenas o seu **CPF**.
+
+---
+
+### 1. Criando a View Model de Login
+
+Dentro da pasta `Models`, crie uma nova classe chamada `LoginViewModel.cs`. Ela servirá para capturar os dados do formulário de login.
+
+```csharp
+using System.ComponentModel.DataAnnotations;
+
+namespace appReverso.Models
+{
+    public class LoginViewModel
+    {
+        [Required(ErrorMessage = "O CPF é obrigatório.")]
+        [Display(Name = "CPF do Paciente")]
+        public string Cpf { get; set; } = string.Empty;
+    }
+}
+
+### 2. Criar Controller de Login
+
+Clique com o botão direito na pasta Controllers > Adicionar > Controlador... > Escolha Controlador MVC - Vazio e nomeie como AccountController.cs.
+
+Adicione o código abaixo para gerenciar o Login e o Logout do paciente:
+
+```csharp
+
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using appReverso.Models;
+
+namespace appReverso.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly DbClinicaContext _context;
+
+        public AccountController(DbClinicaContext context)
+        {
+            _context = context;
+        }
+
+        // GET: /Account/Login
+        [HttpGet]
+        public IActionResult Login()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Consulta");
+            }
+            return View();
+        }
+
+        // POST: /Account/Login
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            // Busca o paciente pelo CPF digitado
+            var paciente = await _context.Pacientes
+                .FirstOrDefaultAsync(p => p.Cpf == model.Cpf);
+
+            if (paciente == null)
+            {
+                ModelState.AddModelError("", "CPF não encontrado. Faça seu cadastro primeiro.");
+                return View(model);
+            }
+
+            // Criando os dados da sessão (Claims)
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, paciente.Codigo.ToString()),
+                new Claim(ClaimTypes.Name, paciente.Nome),
+                new Claim("CPF", paciente.Cpf)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+
+            return RedirectToAction("Index", "Consulta");
+        }
+
+        // GET: /Account/Logout
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
+    }
+}
+
+
+```
+
+### 3. Criar a ViewLogin
+
+  1. Dentro da pasta Views, crie uma nova pasta chamada Account.
+  2. Dentro de Views/Account, crie um arquivo Razor View chamado Login.cshtml com o seguinte conteúdo:
+
+  ```csharp
+    @model appReverso.Models.LoginViewModel
+
+    @{
+        ViewData["Title"] = "Acesso ao Sistema";
+    }
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Clínica Vida & Saúde</h4>
+                    <small>Acesso do Paciente</small>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Cpf" class="form-label"></label>
+                            <input asp-for="Cpf" class="form-control" placeholder="Digite seu CPF (ex: 111.222.333-44)" />
+                            <span asp-validation-for="Cpf" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Entrar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Ainda não tem cadastro?</p>
+                    <a asp-controller="Paciente" asp-action="Create" class="btn btn-link">Cadastre-se aqui</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+
+
+  ```
+
+### 4. Configurando a Autenticação por Cookies no Program.cs
+
+Abra o arquivo Program.cs e ative o serviço de autenticação por cookies.
+
+Insira a configuração antes de var app = builder.Build();
+
+```csharp
+
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+// Configuração da Autenticação por Cookie
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/Login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
+```
+
+E ative os Middlewares de autenticação depois de app.UseRouting(); e antes de app.UseAuthorization();:
+
+```csharp
+
+app.UseRouting();
+
+// ATENÇÃO: Add estas duas linhas nesta ordem exata
+app.UseAuthentication(); 
+app.UseAuthorization();
+
+```
+
+### 5. Protegendo as Rotas com o atributo [Authorize]
+
+Agora que a infraestrutura de login está pronta, precisamos proteger a ConsultaController para proibir o acesso de pessoas não logadas.
+
+Abra o arquivo Controllers/ConsultaController.cs e adicione o atributo [Authorize] acima da classe:
+
+```csharp
+
+using Microsoft.AspNetCore.Authorization;
+
+namespace appReverso.Controllers
+{
+    [Authorize] // Impede o acesso de usuários não autenticados
+    public class ConsultaController : Controller
+    {
+        // Métodos do controller mantidos...
+    }
+}
+
+```
+
+### 6. Atualizando o Layout da Aplicação (_Layout.cshtml)
+Para que o usuário saiba quem está logado e consiga fazer o Logout, abra o arquivo Views/Shared/_Layout.cshtml e atualize a barra de navegação (<nav>):
+
+```html
+<ul class="navbar-nav ms-auto">
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <li class="nav-item">
+            <span class="nav-link text-dark">Olá, <strong>@User.Identity.Name</strong></span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Sair</a>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-primary" asp-controller="Account" asp-action="Login">Entrar</a>
+        </li>
+    }
+</ul>
+
+```
+
+### 7. 🎯 Testando o Fluxo Completo
+
+1. Execute a aplicação (F5).
+2. Tente acessar a rota /Consulta. O ASP.NET Core irá redirecionar automaticamente para a tela de Login (/Account/Login).
+3. Digite o CPF de teste cadastrado no script SQL: 111.222.333-44 e clique em Entrar.
+4. Você será autenticado e redirecionado para a tela de agendamento de consultas!
+5. Se digitar um CPF inexistente, o sistema informará que o cadastro não foi encontrado e oferecerá o link de cadastro de novo paciente.
 
