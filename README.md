@@ -220,7 +220,7 @@ GO
 
 Com nosso Banco de dados prontos, agora é a hora de criarmos o nosso preto no ASP.NET (Visual Studio)
 
-## 📦 Etapa 1: Criando O projeto
+## 📦 Etapa 1: Criando O projeto ASP.NET
 
 - Abre o Visual Studio.
 
@@ -240,6 +240,13 @@ Com nosso Banco de dados prontos, agora é a hora de criarmos o nosso preto no A
 - Microsoft.EntityFrameworkCore.Tools
 
 - Microsoft.VisualStudio.Web.CodeGeneration.Design
+
+Para instalar você deve usar o Gerianciador de Pacote Nuget, cliando com o botão direito do mouse no nome do projeto e clicando em **Gerenciar Pacotes Nuget**.
+
+![Pacote Nugets](./imagens/passo17_nugets.png)
+
+A versão do pacote deve ser a mesma da versão .NET de seu projeto. Se no passo **Etapa 01 - criando o projeto ASP.NET** você escolheu 7.0 
+, na versão do pacote escolha a  maior versão da 7.. exemplo 7.x.x
 
 
 ## ⚙️ Etapa 3: Configuração da String de Conexão no appsettings.json
@@ -265,19 +272,41 @@ Exemplo com Autenticação do Windows (Trusted Connection)
 
 ```json
 "ConnectionStrings": {
-  "ConexaoSqlServer": "Server=localhost; Database=dbClinica; Trusted_Connection=True; TrustServerCertificate=True;"
+  "ConexaoSqlServer": "Server=\\SENAI; Database=dbClinica; Trusted_Connection=True; TrustServerCertificate=True;"
 }
 ```
 
 
-
 ## 🔨 Etapa 4: Engenharia Reversa - scaffolding update database
-Use esse comando para adicionar novas tabelas, se seu projeto já contém a classe context configurada
-no Console de pacote
+
+Você deve abrir o **Console do Gerenciador de Pacotes** para executar o comando a seguir. 
+
+Ele irá fazer o mapeamento das tabelas e automaticamente irá crir a classe de contexto, que é responsável pelo 
+mapeamento das tabelas do banco em classses.
+
+![Gerencidor de pacote](./imagens/passo18_consolePacotes.png)
+
+Comando
 
 ```json
+
 Scaffold-DbContext "Name=ConexaoSqlServer" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+
 ```
+
+Observe também se dentro da pasta Models foi criado para cada tabela uma classe.
+Também, verifique qual o nome que foi dado a classe de Contexto, provalvelmente será DbClincaContext, mas pode ser outro nome. Procure a classe que tenha o sufixo a **context.**, vai ser ela.
+
+
+![models](./imagens/passo19_models.png)
+
+Verifique se alguma classe (paciente, medico, consulta) ficou com o nome diferente, se sim, faça a alteração do nome para igualar ao da tabela.
+
+No caso da imagem acima, ao invés de **Consulta** foi criado **Consultum** . Altere o nome do arquivo da classe. Você também deve alterar o nome dentro da Classe DbClinicaContext. Resumo onde estiver **Consultum** alterar para **Consulta**.
+
+
+![consultamudar](./imagens/passo20_mudarConsulta.png)
+
 
 
 ## 🔨 Etapa 5: Compilação Obrigatória da Solução
@@ -294,7 +323,7 @@ Abra o arquivo Program.cs e insira o registro antes do var app = builder.Build()
 
 ```c#
 using Microsoft.EntityFrameworkCore;
-using appReversotask.Models; // Subsitua pelo namespace real das suas Models
+using appReverso.Models; // Subsitua pelo namespace real das suas Models
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -302,7 +331,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Registrando o DbContext com a String de Conexão
-builder.Services.AddDbContext<DbTasksZeroContext>(options =>
+builder.Services.AddDbContext<DbClinicaContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ConexaoSqlServer")));
 
 var app = builder.Build();
@@ -317,92 +346,34 @@ Agora vamos criar os **Controllers** e **Views Razor** sem digitar nenhuma linha
 1. No **Gerenciador de Soluções**, clique com o botão direito na pasta `Controllers` > **Adicionar** > **Item do Scaffolding...** (ou *New Scaffolded Item...*).
 2. Selecione a opção **Controlador MVC com exibições, usando o Entity Framework** e clique em **Adicionar**.
 3. Na janela de configuração:
-   - **Classe de modelo:** Selecione `Paciente (appReversotask.Models)`.
-   - **Classe do contexto de dados:** Selecione `dbTasksContext (appReversotask.Models)`.
+   - **Classe de modelo:** Selecione `Paciente (appReverso.Models)`.
+   - **Classe do contexto de dados:** Selecione `DbClinicaContext (appReverso.Models)`.
    - **Exibições:** Certifique-se de que a opção de gerar views esteja marcada.
 4. Clique em **Adicionar**.
-5. Repita o mesmo procedimento para a classe de modelo `Tarefa`.
+5. Repita o mesmo procedimento para a classe de modelo `Medico` e `Consulta`.
+
+**ATENÇÃO**
+Deixe os nomes da controller no Singular
+
+![Paciente controller](./imagens/passo22_pacienteController.png)
+
 
 
 ## 🎯 Resultado Esperado
 O Visual Studio gerará automaticamente:
 
-- FuncionariosController.cs e TarefasController.cs com as ações de Create, Read, Update, Delete (CRUD) prontas.
+- PacinteController.cs com as ações de Create, Read, Update, Delete (CRUD) prontas.
 
-- As pastas Views/Funcionarios e Views/Tarefas com os arquivos .cshtml correspondentes (Index, Create, Edit, Details, Delete).
+- As pastas Views/Paciente com os arquivos .cshtml correspondentes (Index, Create, Edit, Details, Delete).
 
-Basta pressionar F5 para executar a aplicação e navegar até /Funcionarios ou /Tarefas para visualizar seu CRUD totalmente funcional conectado ao banco SQL Server! 🚀
+![Paciente complete](./imagens/passo23_pacienteComViews.png)
 
+Basta pressionar F5 para executar a aplicação e navegar até /Paciente para visualizar seu CRUD totalmente funcional conectado ao banco SQL Server! 🚀
 
-# 📝 Exercícios de Fixação: Orientação a Objetos e ORM com C# / Entity Framework
+![Paciente tela](./imagens/passo24_telaPaciente.png)
 
-Com base na estrutura de banco de dados e nas classes geradas para o projeto `dbTasks` (`Funcionario` e `Tarefa`), responda às questões abaixo para testar seus conhecimentos em **Orientação a Objetos (POO)** e **Mapeamento Objeto-Relacional (ORM)**.
-
----
-
-### 1. Relacionamento e Associação de Objetos
-Analisando a chave estrangeira `FK_Tarefa_Funcionario`, onde a tabela `Tarefa` possui a coluna `FuncionarioId` apontando para a tabela `Funcionario`, como essa relação de **1 para N (1:N)** é representada em C# nas classes de modelo?
-
-- [ ] **A)** A classe `Funcionario` possui uma propriedade `public Tarefa Tarefa { get; set; }` e a classe `Tarefa` possui uma propriedade `public List<Funcionario> Funcionarios { get; set; }`.
-- [ ] **B)** A classe `Funcionario` possui uma propriedade de navegação `public virtual ICollection<Tarefa> Tarefas { get; set; }` e a classe `Tarefa` possui a propriedade de navegação `public virtual Funcionario Funcionario { get; set; }`.
-- [ ] **C)** Ambas as classes precisam apenas de propriedades do tipo `int` representando os IDs, sem utilizar propriedades de navegação de objetos.
-- [ ] **D)** O Entity Framework Core cria automaticamente uma terceira classe chamada `FuncionarioTarefa` para gerenciar a associação.
-
----
-
-### 2. Encapsulamento e Propriedades
-No código C# gerado pelo EF Core Power Tools, as colunas das tabelas do SQL Server são mapeadas utilizando o conceito de **Propriedades (Getters e Setters)**. Qual é a principal finalidade do **Encapsulamento** ao utilizar propriedades em C# em vez de atributos/campos públicos (`public string Nome;`)?
-
-- [ ] **A)** Permitir controlar o acesso e a validação dos dados de um objeto, podendo aplicar regras de negócio na leitura ou escrita sem expor os campos privados diretamente.
-- [ ] **B)** Impedir que o banco de dados armazene valores do tipo texto (`string` ou `VARCHAR`).
-- [ ] **C)** Garantir que todas as propriedades sejam obrigatoriamente estáticas (`static`).
-- [ ] **D)** Aumentar a velocidade de execução do banco de dados SQL Server.
-
----
-
-### 3. Abstração e Tipos Nulos (Nullable Types)
-No script SQL fornecido, as colunas `DataIniciada`, `DataFinalizada` e `DataCancelada` da tabela `Tarefa` foram criadas como `DATETIME NULL`. Como o C# representa essa abstração do banco de dados para permitir que uma data seja opcional (ou nula) no objeto?
-
-- [ ] **A)** Utilizando o tipo `DateTime` padrão, pois ele aceita valores nulos por padrão em C#.
-- [ ] **B)** Utilizando o tipo `string`, convertendo a data para texto quando ela for nula.
-- [ ] **C)** Utilizando o tipo de dado anotado com *Nullable*: `DateTime?` ou `Nullable<DateTime>`.
-- [ ] **D)** O C# lança uma exceção de compilação caso tente mapear colunas do tipo `NULL`.
-
----
-
-### 4. O Papel do DbContext (Abstração e Herança)
-A classe `dbTasksContext` herda da classe base `DbContext` do Entity Framework Core. Nesse contexto de POO, qual é o papel principal da classe `dbTasksContext`?
-
-- [ ] **A)** Ela representa a interface gráfica (HTML/Razor) onde o usuário interage na aplicação.
-- [ ] **B)** Ela funciona como uma representação (abstração) da sessão com o banco de dados, exposta através de propriedades `DbSet<T>` que permitem realizar operações de CRUD em coleções de objetos.
-- [ ] **C)** Ela é responsável por compilar o código em linguagem de máquina para o servidor.
-- [ ] **D)** Ela substitui a necessidade de criar a camada de *Controllers* no padrão MVC.
-
----
-
- # 📝 DESAFIO PRÁTICO
-
-O gestor do Projeto percebeu com a área de negócio que precisa saber quais são os gerentes e quais são as pessoas gerenciadas por um funcionário.
-
-Sua função é implementar essa nova regra de negócio:
-
-- RN01:  um funcionário gerencia vários funcionários e um funcionário só pode ter um gerente por vez.
+Repita o mesmo processo para Medico e Consulta
 
 
-![Texto Alternativo da Imagem](/imagens/der_funcionario.png)
-
-Na ilustração acima observe que a mudança consiste iniciamente na tabela funcionário.
-
-O objetivo final é que ao entrar na tela de cadastrou ou edição de Funcionário, seja possível, informar quem é seu gerente.
-
-Você pode seguir as dicas sequencias a seguir para implementar as alterações
-
-1. Alterar a tabela Funcionario, adicionando o campo GERID
-2. Com uso de constraints fazer a relação do campo GERID com funcionário para garantir que todo gerente seja obrigatoriamente um funcionário.
-3. Adicionar o campo na classes Model Funcionado do projeto
-4. Alterar a classe context para registrar a nova coluna e seu relacionado.
-5. Implementar na controller , métodos create e edit para enviar para as View correspondente a lista de gerentes/funcionarios.
-5. Na View Create e Edit do funcionário adicionar o campo Escolha Gerente, que vai listar todos os funcionarios, que nesse caso será escolhido como gerente.
 
 
-BOA SORTE!
