@@ -59,6 +59,17 @@ namespace AppTask.Controllers
         public async Task<IActionResult> Create([Bind("Codigo,Descricao,DataPlanejada,DataIniciada,DataFinalizada,DataCancelada,StatusTarefa,Prazo,FuncionarioId")] Tarefa tarefa)
         {
             Console.WriteLine("ENTROU NO CREATE POST");
+            if (!ModelState.IsValid)
+            {
+                foreach (var item in ModelState)
+                {
+                    foreach (var erro in item.Value.Errors)
+                    {
+                        Console.WriteLine($"{item.Key}: {erro.ErrorMessage}");
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(tarefa);
