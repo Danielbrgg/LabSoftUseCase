@@ -1,43 +1,37 @@
-﻿@model AppTask.Models.CentralDeCusto
+@model AppTask.Models.CentralDeCusto
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nova central de custo";
 }
 
-<h1>Create</h1>
+<div class="mb-4">
+    <h1 class="fw-bold">Nova central de custo</h1>
+    <p class="text-secondary">Cadastre uma nova central e sua meta anual.</p>
+</div>
 
-<h4>CentralDeCusto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="NomeCentral" class="control-label"></label>
-                <input asp-for="NomeCentral" class="form-control" />
+            <div class="mb-3">
+                <label asp-for="NomeCentral" class="form-label fw-semibold">Nome da central</label>
+                <input asp-for="NomeCentral" class="form-control" placeholder="Ex.: Tecnologia" />
                 <span asp-validation-for="NomeCentral" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="ValorMetaAnual" class="control-label"></label>
-                <input asp-for="ValorMetaAnual" class="form-control" />
+            <div class="mb-4">
+                <label asp-for="ValorMetaAnual" class="form-label fw-semibold">Meta anual</label>
+                <input asp-for="ValorMetaAnual" type="number" step="1" min="0" class="form-control" placeholder="0" />
                 <span asp-validation-for="ValorMetaAnual" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancelar</a>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
