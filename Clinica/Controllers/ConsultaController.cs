@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Clinica.Controllers
 {
-    [Authorize]
     public class ConsultaController : Controller
     {
         private readonly DbClinicaContext _context;
@@ -67,8 +66,8 @@ namespace Clinica.Controllers
         // GET: Consulta/Create
         public IActionResult Create()
         {
-            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Codigo");
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Codigo");
+            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Nome");
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Nome");
             return View();
         }
 
@@ -85,8 +84,8 @@ namespace Clinica.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Codigo", consulta.MedicoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Codigo", consulta.PacienteId);
+            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Nome", consulta.MedicoId);
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Nome", consulta.PacienteId);
             return View(consulta);
         }
 
@@ -103,8 +102,8 @@ namespace Clinica.Controllers
             {
                 return NotFound();
             }
-            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Codigo", consulta.MedicoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Codigo", consulta.PacienteId);
+            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Nome", consulta.MedicoId);
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Nome", consulta.PacienteId);
             return View(consulta);
         }
 
@@ -140,8 +139,8 @@ namespace Clinica.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Codigo", consulta.MedicoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Codigo", consulta.PacienteId);
+            ViewData["MedicoId"] = new SelectList(_context.Médicos, "Codigo", "Nome", consulta.MedicoId);
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Codigo", "Nome", consulta.PacienteId);
             return View(consulta);
         }
 

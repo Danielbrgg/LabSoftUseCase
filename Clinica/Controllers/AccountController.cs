@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace appReverso.Controllers
+namespace Clinica.Controllers
 {
     public class AccountController : Controller
     {
@@ -16,56 +16,36 @@ namespace appReverso.Controllers
             _context = context;
         }
 
-        // GET: /Account/Login
         [HttpGet]
-        public IActionResult Login()
-        {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Consulta");
-            }
-            return View();
-        }
+        public IActionResult Login() => View();
 
-        // POST: /Account/Login
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Busca o paciente pelo CPF digitado
             var paciente = await _context.Pacientes
                 .FirstOrDefaultAsync(p => p.Cpf == model.Cpf);
 
             if (paciente == null)
             {
-                ModelState.AddModelError("", "CPF não encontrado. Faça seu cadastro primeiro.");
+                ModelState.AddModelError("", "CPF não encontrado.");
                 return View(model);
             }
 
-            // Criando os dados da sessão (Claims)
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, paciente.Codigo.ToString()),
-                new Claim(ClaimTypes.Name, paciente.Nome),
-                new Claim("CPF", paciente.Cpf)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+            // Salva na Session
+            HttpContext.Session.SetInt32("PacienteId", paciente.Codigo);
+            HttpContext.Session.SetString("PacienteNome", paciente.Nome);
 
             return RedirectToAction("Index", "Consulta");
         }
 
-        // GET: /Account/Logout
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear(); // Limpa a sessão
             return RedirectToAction("Login");
         }
+
     }
 }

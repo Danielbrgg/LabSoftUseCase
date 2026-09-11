@@ -22,15 +22,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// Configuração da autenticação por Cookie
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/Login";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    });
-
 var app = builder.Build();
 
 // Configuração do tratamento de erros
@@ -47,10 +38,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseSession();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 // Configuração das rotas
 app.MapControllerRoute(
     name: "default",
