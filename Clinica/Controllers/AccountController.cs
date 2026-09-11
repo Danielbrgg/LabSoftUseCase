@@ -1,4 +1,4 @@
-﻿using Clinica.Models;
+using Clinica.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,6 @@ namespace appReverso.Controllers
             _context = context;
         }
 
-        // GET: /Account/Login
         [HttpGet]
         public IActionResult Login()
         {
@@ -24,17 +23,16 @@ namespace appReverso.Controllers
             {
                 return RedirectToAction("Index", "Consulta");
             }
+
             return View();
         }
 
-        // POST: /Account/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 
-            // Busca o paciente pelo CPF digitado
             var paciente = await _context.Pacientes
                 .FirstOrDefaultAsync(p => p.Cpf == model.Cpf);
 
@@ -44,7 +42,6 @@ namespace appReverso.Controllers
                 return View(model);
             }
 
-            // Criando os dados da sessão (Claims)
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, paciente.Codigo.ToString()),
@@ -52,19 +49,29 @@ namespace appReverso.Controllers
                 new Claim("CPF", paciente.Cpf)
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
+                new ClaimsPrincipal(claimsIdentity)
+            );
+
+            HttpContext.Session.SetInt32("PacienteId", paciente.Codigo);
 
             return RedirectToAction("Index", "Consulta");
         }
 
-        // GET: /Account/Logout
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
             return RedirectToAction("Login");
         }
     }
