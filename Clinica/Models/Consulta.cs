@@ -15,7 +15,7 @@ public partial class Consulta
 
     public int MedicoId { get; set; }
 
-    public virtual Médico Medico { get; set; } = null!;
+    public virtual Médico? Medico { get; set; }
 
-    public virtual Paciente Paciente { get; set; } = null!;
+    public virtual Paciente? Paciente { get; set; }
 }
